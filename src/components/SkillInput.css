@@ -1,0 +1,49 @@
+.skill-input { display: flex; flex-direction: column; gap: 12px; }
+
+.skill-input__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  min-height: 44px;
+}
+
+.skill-input__row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.skill-input__dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: rgba(13, 18, 32, 0.98);
+  border: 1px solid var(--clr-border-bright);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+  animation: fadeIn 0.15s ease;
+}
+
+.skill-input__option {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: var(--clr-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.skill-input__option:hover {
+  background: rgba(99,102,241,0.12);
+  color: var(--clr-text);
+}
+
+@media (max-width: 600px) {
+  .skill-input__row { flex-wrap: wrap; }
+  .skill-input__row select { width: 100% !important; }
+}
