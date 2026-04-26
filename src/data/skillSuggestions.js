@@ -124,6 +124,34 @@ export const SKILL_SUGGESTIONS = [
 
   // ── Hardware Engineering ──
   "Circuit Design", "Microcontrollers", "C / C++", "Verilog / VHDL", "CAD Software", "Embedded Systems", "Soldering & Prototyping",
+
+  // ── Project Management ──
+  "Conflict Resolution", "Coaching & Mentoring", "Program Management", "Budgeting & Forecasting",
+
+  // ── Legal Tech ──
+  "Legal Domain Knowledge",
+
+  // ── Audio & Music Tech ──
+  "Digital Audio Workstations (DAW)", "Sound Mixing", "Sound Design", "Acoustics",
+  "MIDI & Synthesis", "Audio Post-Production", "DSP (Digital Signal Processing)", "JUCE Framework",
+
+  // ── Environmental Tech ──
+  "GIS Software (ArcGIS/QGIS)", "Remote Sensing", "Cartography", "ESG Reporting",
+
+  // ── Supply Chain & Logistics ──
+  "ERP Systems (SAP)",
+
+  // ── Consulting ──
+  "Business Strategy",
+
+  // ── Journalism & Media ──
+  "Community Management",
+
+  // ── Aerospace & Defense ──
+  "Real-Time Operating Systems",
+
+  // ── Additional ──
+  "CDN & Caching Strategies", "Ethics & Policy", "Appium", "Research Paper Writing",
 ];
 
 // Deduplicate
