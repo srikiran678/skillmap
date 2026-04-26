@@ -2122,12 +2122,9 @@ export const JOB_SKILLS_DB = [
       { skill: "Data Visualization", levelNeeded: "Intermediate" },
       { skill: "Python", levelNeeded: "Beginner" },
     ],
-    academicRelevance: ["Public Policy", "Economics", "Political Science", "Statistics"],
     relatedJobs: ["Research Analyst", "Government Statistician"],
+    academicRelevance: ["Public Policy", "Economics", "Political Science", "Statistics"],
   },
-];
-
-export const DOMAINS = [...new Set(JOB_SKILLS_DB.map(j => j.domain)),
 
   // ══════════════════════════════════════════════
   // EXPANDED CAREER DATABASE — Auto-merged
@@ -2985,6 +2982,8 @@ export const DOMAINS = [...new Set(JOB_SKILLS_DB.map(j => j.domain)),
     relatedJobs: ["ESG Consultant","Waste Management Specialist"],
   }
 ];
+
+export const DOMAINS = [...new Set(JOB_SKILLS_DB.map(j => j.domain))];
 export const JOB_TITLES = JOB_SKILLS_DB.map(j => j.jobTitle);
 
 export const getJobByTitle = (title) =>
