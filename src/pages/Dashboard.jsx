@@ -247,8 +247,10 @@ export default function Dashboard() {
 
             {profile.skills?.length === 0 ? (
               <div className="glass" style={{ textAlign: 'center', padding: 48 }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>📭</div>
-                <p style={{ color: 'var(--clr-text-muted)' }}>No skills added yet. Edit your profile to add your skills.</p>
+                <div className="animate-float" style={{ fontSize: '3.5rem', marginBottom: 16 }}>📭</div>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: 8 }}>Your toolkit is empty</h3>
+                <p style={{ color: 'var(--clr-text-muted)', marginBottom: 20 }}>Add the skills you already know to see what you should learn next.</p>
+                <button className="btn btn-primary" onClick={() => navigate('/profile')}>Update Profile</button>
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14 }}>

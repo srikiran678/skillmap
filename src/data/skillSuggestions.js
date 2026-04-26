@@ -202,8 +202,6 @@ export const SKILL_SUGGESTIONS = [
 
   // ── Translation & Localization ──
   "i18n / L10n Frameworks", "Unicode & Encoding",
-,
-
   // ── Auto-merged Skills ──
   "Structural Analysis",
   "Geotechnical Engineering",
@@ -276,8 +274,8 @@ export const searchSkills = (query) => {
   if (!query || query.length < 1) return [];
   const q = query.toLowerCase();
   // Prioritize starts-with matches, then includes
-  const startsWith = uniqueSkills.filter(s => s.toLowerCase().startsWith(q));
-  const includes = uniqueSkills.filter(s => !s.toLowerCase().startsWith(q) && s.toLowerCase().includes(q));
+  const startsWith = uniqueSkills.filter(s => s && s.toLowerCase().startsWith(q));
+  const includes = uniqueSkills.filter(s => s && !s.toLowerCase().startsWith(q) && s.toLowerCase().includes(q));
   return [...startsWith, ...includes].slice(0, 10);
 };
 

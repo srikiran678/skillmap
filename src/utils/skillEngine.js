@@ -88,8 +88,9 @@ export const generateRoadmap = (jobProfiles, userSkills = []) => {
   const skillMap = new Map();
 
   for (const job of jobProfiles) {
-    const { toLearn } = computeSkillGap(job, userSkills);
-    for (const item of toLearn) {
+    const { toLearn, mastered } = computeSkillGap(job, userSkills);
+
+    const processItem = (item, isMastered) => {
       const key = normalize(item.skill);
       if (skillMap.has(key)) {
         const existing = skillMap.get(key);
@@ -100,19 +101,26 @@ export const generateRoadmap = (jobProfiles, userSkills = []) => {
             getLevelScore(existingPriority === 'High' ? 3 : existingPriority === 'Medium' ? 2 : 1)) {
           existing.priority = newPriority;
         }
-        existing.jobs.push(job.jobTitle);
+        if (!existing.jobs.includes(job.jobTitle)) {
+          existing.jobs.push(job.jobTitle);
+        }
+        if (!isMastered) existing.isMastered = false;
       } else {
         skillMap.set(key, {
           skill: item.skill,
           levelNeeded: item.levelNeeded,
           userLevel: item.userLevel,
-          priority: item.priority,
-          isUpgrade: item.isUpgrade,
+          priority: item.priority || 'Medium',
+          isUpgrade: item.isUpgrade || false,
           jobs: [job.jobTitle],
-          status: 'To Learn', // To Learn | Learning | Achieved
+          status: isMastered ? 'Achieved' : 'To Learn',
+          isMastered: isMastered
         });
       }
-    }
+    };
+
+    toLearn.forEach(item => processItem(item, false));
+    mastered.forEach(item => processItem(item, true));
   }
 
   const roadmap = Array.from(skillMap.values());

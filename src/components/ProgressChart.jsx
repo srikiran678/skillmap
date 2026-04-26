@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -12,13 +12,26 @@ import { Doughnut, Bar } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
+const createGradient = (ctx, chartArea, colorStart, colorEnd) => {
+  const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+  gradient.addColorStop(0, colorStart);
+  gradient.addColorStop(1, colorEnd);
+  return gradient;
+};
+
 export function DoughnutChart({ mastered, toLearn }) {
   const data = {
     labels: ['Mastered', 'To Learn'],
     datasets: [{
       data: [mastered, toLearn],
-      backgroundColor: ['rgba(16,185,129,0.85)', 'rgba(99,102,241,0.85)'],
-      borderColor: ['rgba(16,185,129,0.3)', 'rgba(99,102,241,0.3)'],
+      backgroundColor: (context) => {
+        const chart = context.chart;
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return 'rgba(16,185,129,0.8)';
+        if (context.dataIndex === 0) return createGradient(ctx, chartArea, '#10b981', '#06b6d4');
+        return createGradient(ctx, chartArea, '#6366f1', '#8b5cf6');
+      },
+      borderColor: 'transparent',
       borderWidth: 2,
       hoverOffset: 6,
     }],
@@ -27,7 +40,7 @@ export function DoughnutChart({ mastered, toLearn }) {
   const options = {
     responsive: true,
     maintainAspectRatio: true,
-    cutout: '70%',
+    cutout: '72%',
     plugins: {
       legend: {
         position: 'bottom',
@@ -59,11 +72,15 @@ export function JobMatchBar({ jobGaps = [] }) {
       {
         label: 'Match %',
         data: jobGaps.map(g => g.matchPercent),
-        backgroundColor: jobGaps.map(g =>
-          g.matchPercent >= 70 ? 'rgba(16,185,129,0.8)' :
-          g.matchPercent >= 40 ? 'rgba(245,158,11,0.8)' :
-          'rgba(99,102,241,0.8)'
-        ),
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return 'rgba(16,185,129,0.8)';
+          const val = context.raw;
+          if (val >= 70) return createGradient(ctx, chartArea, '#10b981', '#06b6d4');
+          if (val >= 40) return createGradient(ctx, chartArea, '#f59e0b', '#ef4444');
+          return createGradient(ctx, chartArea, '#6366f1', '#8b5cf6');
+        },
         borderRadius: 6,
         borderSkipped: false,
       },

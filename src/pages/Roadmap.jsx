@@ -12,7 +12,7 @@ const STAGE_COLORS = { 'To Learn': 'primary', 'Learning': 'amber', 'Achieved': '
 
 export default function Roadmap() {
   const navigate = useNavigate();
-  const { profile, selectedJobs, hasProfile, skillProgress, updateSkillStatus, addMasteredSkill } = useUser();
+  const { profile, selectedJobs, hasProfile, skillProgress, updateSkillStatus, addMasteredSkill, removeSkill } = useUser();
   const [filterPriority, setFilterPriority] = useState('All');
   const [expandedSkill, setExpandedSkill] = useState(null);
 
@@ -34,7 +34,7 @@ export default function Roadmap() {
   // Merge roadmap with progress state
   const enriched = roadmap.map(item => ({
     ...item,
-    status: skillProgress[item.skill]?.status || 'To Learn',
+    status: item.isMastered ? 'Achieved' : (skillProgress[item.skill]?.status || item.status || 'To Learn'),
   }));
 
   const filtered = filterPriority === 'All'
@@ -53,9 +53,11 @@ export default function Roadmap() {
 
   const handleStatusChange = (skill, newStatus) => {
     updateSkillStatus(skill, newStatus);
-    // If achieving a skill, also add to profile skills
     if (newStatus === 'Achieved') {
-      addMasteredSkill(skill, 'Intermediate');
+      const item = roadmap.find(i => i.skill === skill);
+      addMasteredSkill(skill, item ? item.levelNeeded : 'Intermediate');
+    } else {
+      removeSkill(skill);
     }
   };
 
@@ -115,14 +117,14 @@ export default function Roadmap() {
           {STAGES.map(stage => (
             <div key={stage} className="roadmap__column">
               {/* Column header */}
-              <div className="roadmap__col-header">
+              <div className={`roadmap__col-header roadmap__col-header--${STAGE_COLORS[stage]}`}>
                 <span className="roadmap__col-icon">{STAGE_ICONS[stage]}</span>
                 <h3>{stage}</h3>
                 <span className="roadmap__col-count">{grouped[stage].length}</span>
               </div>
 
               {/* Skill cards */}
-              <div className="roadmap__cards">
+              <div className={`roadmap__cards roadmap__cards--${STAGE_COLORS[stage]}`}>
                 {grouped[stage].length === 0 ? (
                   <div className="roadmap__empty">
                     {stage === 'Achieved' ? '🎉 Keep going!' : 'No skills here yet'}
@@ -142,6 +144,12 @@ export default function Roadmap() {
                               <strong style={{ fontSize: '0.95rem' }}>{item.skill}</strong>
                               {item.isUpgrade && (
                                 <span style={{ fontSize: '0.65rem', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', padding: '2px 6px', borderRadius: 99, border: '1px solid rgba(245,158,11,0.25)' }}>↑ Upgrade</span>
+                              )}
+                              {stage === 'Learning' && (
+                                <span style={{ fontSize: '0.65rem', color: 'var(--clr-amber)', display: 'flex', alignItems: 'center', gap: 4, marginLeft: 'auto' }}>
+                                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--clr-amber)', boxShadow: '0 0 8px var(--clr-amber)' }} className="animate-pulse"></span>
+                                  In Progress
+                                </span>
                               )}
                             </div>
                             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>

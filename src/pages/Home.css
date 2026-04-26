@@ -9,7 +9,14 @@
   --my: 0px;
 }
 
-.hero__bg { position: absolute; inset: 0; pointer-events: none; }
+.hero__bg { 
+  position: absolute; 
+  inset: 0; 
+  pointer-events: none; 
+  background: var(--grad-hero);
+  background-size: 200% 200%;
+  animation: ambientShift 15s ease infinite;
+}
 
 .hero__orb {
   position: absolute;
