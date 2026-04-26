@@ -1044,6 +1044,85 @@ export const JOB_SKILLS_DB = [
     academicRelevance: ["Biology", "Bioinformatics", "Computer Science", "Statistics"],
     relatedJobs: ["Genomic Data Scientist", "Computational Biologist"],
   },
+
+  // ── QUALITY ASSURANCE ──
+  {
+    jobTitle: "QA Automation Engineer",
+    domain: "Quality Assurance",
+    icon: "🧪",
+    description: "Write scripts and create frameworks to test software automatically.",
+    avgSalary: "$80,000 – $120,000",
+    skillsRequired: [
+      { skill: "Selenium", levelNeeded: "Intermediate" },
+      { skill: "Cypress", levelNeeded: "Intermediate" },
+      { skill: "Python", levelNeeded: "Beginner" },
+      { skill: "Java", levelNeeded: "Beginner" },
+      { skill: "JavaScript", levelNeeded: "Intermediate" },
+      { skill: "Testing / QA", levelNeeded: "Advanced" },
+      { skill: "CI/CD Pipelines", levelNeeded: "Beginner" },
+      { skill: "Postman", levelNeeded: "Intermediate" }
+    ],
+    academicRelevance: ["Computer Science", "Software Engineering", "IT"],
+    relatedJobs: ["Test Automation Engineer", "SDET", "QA Analyst"]
+  },
+
+  // ── SALES & SUCCESS ──
+  {
+    jobTitle: "Sales Engineer",
+    domain: "Sales & Success",
+    icon: "🤝",
+    description: "Combine technical knowledge with sales skills to sell complex software solutions.",
+    avgSalary: "$100,000 – $160,000",
+    skillsRequired: [
+      { skill: "Technical Presentation", levelNeeded: "Advanced" },
+      { skill: "Sales Strategy", levelNeeded: "Intermediate" },
+      { skill: "Cloud Computing", levelNeeded: "Intermediate" },
+      { skill: "System Design", levelNeeded: "Beginner" },
+      { skill: "REST APIs", levelNeeded: "Beginner" },
+      { skill: "Stakeholder Management", levelNeeded: "Advanced" },
+      { skill: "CRM Tools", levelNeeded: "Intermediate" }
+    ],
+    academicRelevance: ["Business Administration", "Computer Science", "Engineering"],
+    relatedJobs: ["Solutions Consultant", "Pre-Sales Engineer", "Technical Account Manager"]
+  },
+  {
+    jobTitle: "Technical Support Engineer",
+    domain: "Sales & Success",
+    icon: "🎧",
+    description: "Troubleshoot and resolve complex technical issues for customers.",
+    avgSalary: "$60,000 – $95,000",
+    skillsRequired: [
+      { skill: "Linux", levelNeeded: "Intermediate" },
+      { skill: "SQL", levelNeeded: "Beginner" },
+      { skill: "Networking", levelNeeded: "Intermediate" },
+      { skill: "Customer Service", levelNeeded: "Advanced" },
+      { skill: "Ticketing Systems", levelNeeded: "Intermediate" },
+      { skill: "Debugging", levelNeeded: "Intermediate" },
+      { skill: "REST APIs", levelNeeded: "Beginner" }
+    ],
+    academicRelevance: ["IT", "Computer Science", "Information Systems"],
+    relatedJobs: ["IT Support Specialist", "Help Desk Technician", "Support Analyst"]
+  },
+
+  // ── HARDWARE ENGINEERING ──
+  {
+    jobTitle: "Hardware Engineer",
+    domain: "Hardware Engineering",
+    icon: "🔌",
+    description: "Design, develop, and test computer hardware and physical components.",
+    avgSalary: "$85,000 – $140,000",
+    skillsRequired: [
+      { skill: "Circuit Design", levelNeeded: "Advanced" },
+      { skill: "Microcontrollers", levelNeeded: "Intermediate" },
+      { skill: "C / C++", levelNeeded: "Intermediate" },
+      { skill: "Verilog / VHDL", levelNeeded: "Intermediate" },
+      { skill: "CAD Software", levelNeeded: "Intermediate" },
+      { skill: "Embedded Systems", levelNeeded: "Advanced" },
+      { skill: "Soldering & Prototyping", levelNeeded: "Beginner" }
+    ],
+    academicRelevance: ["Electrical Engineering", "Computer Engineering", "Physics"],
+    relatedJobs: ["Electrical Engineer", "FPGA Engineer", "Systems Engineer"]
+  }
 ];
 
 export const DOMAINS = [...new Set(JOB_SKILLS_DB.map(j => j.domain))];

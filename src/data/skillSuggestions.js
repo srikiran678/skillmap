@@ -115,6 +115,15 @@ export const SKILL_SUGGESTIONS = [
   // ── General Dev Tools ──
   "Git", "GitHub", "JIRA", "Postman", "VS Code", "Vim",
   "Linux Terminal", "SSH", "Browser DevTools",
+
+  // ── Quality Assurance ──
+  "Selenium", "Cypress", "Debugging",
+
+  // ── Sales & Success ──
+  "Technical Presentation", "Sales Strategy", "Customer Service", "Ticketing Systems",
+
+  // ── Hardware Engineering ──
+  "Circuit Design", "Microcontrollers", "C / C++", "Verilog / VHDL", "CAD Software", "Embedded Systems", "Soldering & Prototyping",
 ];
 
 // Deduplicate
