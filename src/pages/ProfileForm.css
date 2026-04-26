@@ -112,9 +112,16 @@
 /* Domain Tabs */
 .domain-tabs {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
   margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.domain-tabs::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 .domain-tab {
   padding: 6px 14px;
@@ -126,6 +133,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 .domain-tab:hover { border-color: var(--clr-primary); color: var(--clr-text); }
 .domain-tab--active {

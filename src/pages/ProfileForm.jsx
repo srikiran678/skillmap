@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import SkillInput from '../components/SkillInput';
@@ -51,6 +51,23 @@ export default function ProfileForm() {
   const [skills, setSkills] = useState(profile.skills || []);
   const [customJob, setCustomJob] = useState('');
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    // If the profile is reset externally, sync the local state back to empty/default.
+    if (!profile.name && profile.careerInterests?.length === 0) {
+      setStep(1);
+      setName('');
+      setEmail('');
+      setDegree('');
+      setField('');
+      setYear('');
+      setInstitution('');
+      setSelectedDomain(null);
+      setCareerInterests([]);
+      setSkills([]);
+      setErrors({});
+    }
+  }, [profile]);
 
   const jobsForDomain = selectedDomain ? JOB_SKILLS_DB.filter(j => j.domain === selectedDomain) : [];
 
@@ -240,7 +257,12 @@ export default function ProfileForm() {
                   placeholder="Add a custom job title…"
                   value={customJob}
                   onChange={e => setCustomJob(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && addCustomJob()}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addCustomJob();
+                    }
+                  }}
                 />
                 <button type="button" className="btn btn-secondary" onClick={addCustomJob}>+ Add</button>
               </div>

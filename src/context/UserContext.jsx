@@ -48,8 +48,19 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem('skillmap_skill_progress');
   }, []);
 
-  // Get selected job profiles from DB
-  const selectedJobs = JOB_SKILLS_DB.filter(j => profile.careerInterests?.includes(j.jobTitle));
+  // Get selected job profiles from DB, adding custom jobs dynamically
+  const selectedJobs = profile.careerInterests?.map(title => {
+    const found = JOB_SKILLS_DB.find(j => j.jobTitle === title);
+    if (found) return found;
+    return {
+      jobTitle: title,
+      domain: "Custom",
+      icon: "✨",
+      description: "Custom career goal",
+      avgSalary: "Variable",
+      skillsRequired: [],
+    };
+  }) || [];
 
   // Skill progress actions
   const updateSkillStatus = useCallback((skillName, status) => {
