@@ -152,6 +152,56 @@ export const SKILL_SUGGESTIONS = [
 
   // ── Additional ──
   "CDN & Caching Strategies", "Ethics & Policy", "Appium", "Research Paper Writing",
+
+  // ── Human Resources ──
+  "HRIS Platforms", "Recruiting Strategies", "ATS Platforms", "Employer Branding",
+  "LinkedIn Recruiting", "LMS Administration", "E-Learning Authoring Tools",
+  "Needs Assessment",
+
+  // ── Real Estate Tech ──
+  "Maps API Integration",
+
+  // ── Agriculture Tech ──
+  "Drone Operations (Part 107)", "Equipment Maintenance",
+
+  // ── Sports Analytics ──
+  "IoT Protocols",
+
+  // ── Automotive Tech ──
+  "Sensor Fusion", "AUTOSAR", "CAN Bus Protocol",
+  "Battery Chemistry", "MATLAB / Simulink", "Thermal Management",
+
+  // ── Telecommunications ──
+  "5G / LTE Technology", "RF Engineering", "SIP / VoIP Protocols", "Asterisk / FreeSWITCH",
+
+  // ── Architecture & Construction ──
+  "Revit", "AutoCAD", "BIM Coordination", "Navisworks", "3D Modeling",
+
+  // ── Pharmaceutical & Biotech ──
+  "SAS Programming", "Clinical Data Standards (CDISC)", "GCP Compliance",
+  "Molecular Modeling", "Chemistry",
+
+  // ── Insurance Tech ──
+  // (skills already covered above)
+
+  // ── Travel & Hospitality ──
+  "Payment Gateway Integration", "Revenue Management Systems",
+
+  // ── Energy & Utilities ──
+  "Power Systems Analysis", "Renewable Energy Technologies",
+
+  // ── Photography & Videography ──
+  "Adobe Lightroom", "Studio Lighting", "Composition Techniques", "Photo Retouching",
+  "Camera Operation", "Cinematography", "DaVinci Resolve", "Color Grading",
+
+  // ── DevRel ──
+  "Public Speaking",
+
+  // ── Fashion & Retail Tech ──
+  // (skills already covered above)
+
+  // ── Translation & Localization ──
+  "i18n / L10n Frameworks", "Unicode & Encoding",
 ];
 
 // Deduplicate
