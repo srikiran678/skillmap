@@ -3,63 +3,62 @@
    Premium dark glassmorphism theme
    ============================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
 
 /* ── Design Tokens ── */
 :root {
   /* Colors */
-  --clr-bg: #080c14;
-  --clr-bg2: #0d1220;
-  --clr-surface: rgba(255, 255, 255, 0.04);
-  --clr-surface-hover: rgba(255, 255, 255, 0.08);
-  --clr-border: rgba(255, 255, 255, 0.08);
-  --clr-border-bright: rgba(255, 255, 255, 0.15);
+  --clr-bg: #050508;
+  --clr-bg2: #0a0a12;
+  --clr-surface: rgba(0, 243, 255, 0.03);
+  --clr-surface-hover: rgba(0, 243, 255, 0.08);
+  --clr-border: rgba(0, 243, 255, 0.15);
+  --clr-border-bright: rgba(0, 243, 255, 0.4);
 
-  --clr-primary: #6366f1;       /* Indigo */
-  --clr-primary-glow: rgba(99, 102, 241, 0.3);
-  --clr-secondary: #06b6d4;     /* Cyan */
-  --clr-secondary-glow: rgba(6, 182, 212, 0.25);
-  --clr-accent: #8b5cf6;        /* Violet */
-  --clr-accent-glow: rgba(139, 92, 246, 0.25);
-  --clr-emerald: #10b981;       /* Emerald */
-  --clr-amber: #f59e0b;         /* Amber */
-  --clr-rose: #f43f5e;          /* Rose */
+  --clr-primary: #00f3ff;       /* Neon Cyan */
+  --clr-primary-glow: rgba(0, 243, 255, 0.5);
+  --clr-secondary: #ff00ff;     /* Neon Magenta */
+  --clr-secondary-glow: rgba(255, 0, 255, 0.4);
+  --clr-accent: #b026ff;        /* Electric Purple */
+  --clr-accent-glow: rgba(176, 38, 255, 0.4);
+  --clr-emerald: #00ff66;       /* Neon Green */
+  --clr-amber: #ffcc00;         /* Cyber Yellow */
+  --clr-rose: #ff003c;          /* Laser Red */
 
-  --clr-text: #f1f5f9;
-  --clr-text-muted: #94a3b8;
-  --clr-text-dim: #64748b;
+  --clr-text: #e0f8ff;
+  --clr-text-muted: #8ab4f8;
+  --clr-text-dim: #4a6fa5;
 
   /* Gradients */
-  --grad-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
-  --grad-secondary: linear-gradient(135deg, #06b6d4, #6366f1);
-  --grad-emerald: linear-gradient(135deg, #10b981, #06b6d4);
-  --grad-amber: linear-gradient(135deg, #f59e0b, #ef4444);
-  --grad-hero: radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.18) 0%, transparent 60%),
-               radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.15) 0%, transparent 55%),
-               radial-gradient(ellipse at 60% 80%, rgba(6,182,212,0.12) 0%, transparent 50%);
+  --grad-primary: linear-gradient(135deg, #00f3ff, #b026ff);
+  --grad-secondary: linear-gradient(135deg, #ff00ff, #00f3ff);
+  --grad-emerald: linear-gradient(135deg, #00ff66, #00f3ff);
+  --grad-amber: linear-gradient(135deg, #ffcc00, #ff003c);
+  --grad-hero: radial-gradient(ellipse at 20% 50%, rgba(0,243,255,0.15) 0%, transparent 50%),
+               radial-gradient(ellipse at 80% 20%, rgba(255,0,255,0.15) 0%, transparent 50%);
 
   /* Typography */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Rajdhani', sans-serif;
+  --font-display: 'Orbitron', sans-serif;
 
   /* Spacing */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
-  --shadow-glow-primary: 0 0 24px rgba(99,102,241,0.3);
-  --shadow-glow-cyan: 0 0 24px rgba(6,182,212,0.3);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.8);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.8);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.9);
+  --shadow-glow-primary: 0 0 15px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(0,243,255,0.2);
+  --shadow-glow-cyan: 0 0 20px rgba(0, 243, 255, 0.5);
 
   /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 100ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── Reset ── */
@@ -68,6 +67,10 @@ html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-sans);
   background-color: var(--clr-bg);
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
   color: var(--clr-text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;

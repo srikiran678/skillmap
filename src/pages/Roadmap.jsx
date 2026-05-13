@@ -197,6 +197,17 @@ export default function Roadmap() {
                                   <span style={{ fontSize: '0.65rem', opacity: 0.6 }}>{r.type}</span>
                                 </a>
                               ))}
+                              <a
+                                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.skill + ' tutorial')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="resource-link"
+                                style={{ color: '#ff003c' }}
+                              >
+                                <span>▶️</span>
+                                <span style={{ flex: 1 }}>Search YouTube Tutorials</span>
+                                <span style={{ fontSize: '0.65rem', opacity: 0.6 }}>Video</span>
+                              </a>
                             </div>
                           </div>
                         )}

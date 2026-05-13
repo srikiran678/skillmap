@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { to: '/profile', label: 'Profile', icon: '📄' },
   { to: '/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/roadmap', label: 'Roadmap', icon: '🗺️' },
+  { to: '/mindmap', label: 'Mind Map', icon: '🧠' },
 ];
 
 export default function Navbar() {
@@ -42,7 +43,7 @@ export default function Navbar() {
             >
               <span className="navbar__link-icon">{link.icon}</span>
               <span>{link.label}</span>
-              {(link.to === '/dashboard' || link.to === '/roadmap') && !hasProfile && (
+              {(link.to === '/dashboard' || link.to === '/roadmap' || link.to === '/mindmap') && !hasProfile && (
                 <span className="navbar__lock">🔒</span>
               )}
             </NavLink>

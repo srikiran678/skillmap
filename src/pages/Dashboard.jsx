@@ -210,7 +210,7 @@ export default function Dashboard() {
                         <td style={{ fontSize: '0.78rem', color: 'var(--clr-text-muted)' }}>
                           {item.jobs.slice(0, 2).join(', ')}{item.jobs.length > 2 ? ` +${item.jobs.length - 2}` : ''}
                         </td>
-                        <td>
+                        <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                           {resources.slice(0, 1).map(r => (
                             <a
                               key={r.url}
@@ -223,6 +223,16 @@ export default function Dashboard() {
                               {r.free ? '🆓' : '💰'} {r.type}
                             </a>
                           ))}
+                          <a
+                            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.skill + ' tutorial')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-ghost btn-sm"
+                            style={{ fontSize: '0.75rem', color: '#ff003c' }}
+                            title="Search YouTube Tutorials"
+                          >
+                            ▶️ Video
+                          </a>
                         </td>
                       </tr>
                     );
