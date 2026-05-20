@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import StatCard from '../components/StatCard';
@@ -8,13 +8,39 @@ import RadarChart from '../components/RadarChart';
 import { DoughnutChart, JobMatchBar } from '../components/ProgressChart';
 import { computeAllGaps, computeProfileStats, generateRoadmap } from '../utils/skillEngine';
 import { getResourcesForSkill } from '../data/learningResources';
+import confetti from 'canvas-confetti';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 import './Dashboard.css';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { profile, selectedJobs, hasProfile, resetProfile, updateSkillLevel, addMasteredSkill } = useUser();
+  const { profile, selectedJobs, hasProfile, resetProfile, updateSkillLevel, addXP, awardBadge } = useUser();
   const [activeTab, setActiveTab] = useState('overview');
   const [sortBy, setSortBy] = useState('priority');
+
+  // Timer State (Feature 10)
+  const [timerActive, setTimerActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(1500); // 25 mins
+
+  useEffect(() => {
+    let interval = null;
+    if (timerActive && timeLeft > 0) {
+      interval = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+    } else if (timerActive && timeLeft === 0) {
+      setTimerActive(false);
+      addXP(50);
+      awardBadge('Focus Master ⏱️');
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+    return () => clearInterval(interval);
+  }, [timerActive, timeLeft, addXP, awardBadge]);
+
+  const formatTime = (s) => {
+    const mins = Math.floor(s / 60);
+    const secs = s % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
 
   // Guard
   if (!hasProfile) {
@@ -48,21 +74,101 @@ export default function Dashboard() {
 
   const matchColor = stats.overallMatch >= 70 ? 'emerald' : stats.overallMatch >= 40 ? 'amber' : 'primary';
 
+  // Feature 2: AI Recommendation
+  const recommendedSkill = sortedToLearn[0];
+
   return (
     <div className="dashboard page">
       <div className="container">
 
-        {/* Header */}
-        <div className="dashboard__header animate-fadeInUp">
+        {/* Header with Gamification (Feature 3) */}
+        <div className="dashboard__header animate-fadeInUp" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1>Welcome back, <span className="text-gradient">{profile.name || 'Learner'}</span> 👋</h1>
+            <h1>Welcome to the Neural Net, <span className="text-gradient">{profile.name || 'Operative'}</span> ⚡</h1>
             <p style={{ color: 'var(--clr-text-muted)', marginTop: 6 }}>
-              {profile.careerInterests?.length} target career{profile.careerInterests?.length !== 1 ? 's' : ''} · {profile.skills?.length} skills in your toolkit
+              {profile.careerInterests?.length} targeted nodes · {profile.skills?.length} integrated skills
             </p>
+            <div style={{ marginTop: 12, display: 'flex', gap: 10, alignItems: 'center' }}>
+              <span className="badge badge-high" style={{ padding: '6px 12px', fontSize: '0.9rem' }}>XP: {profile.xp || 0}</span>
+              {profile.badges?.map(b => (
+                <span key={b} className="badge badge-advanced" style={{ padding: '6px 12px' }}>{b}</span>
+              ))}
+            </div>
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button className="btn btn-secondary btn-sm" onClick={() => navigate('/profile')}>✏️ Edit Profile</button>
-            <button className="btn btn-primary btn-sm" onClick={() => navigate('/roadmap')}>🗺️ View Roadmap</button>
+            <button className="btn btn-secondary btn-sm" onClick={() => navigate('/profile')}>✏️ Reconfigure</button>
+            <button className="btn btn-primary btn-sm" onClick={() => navigate('/roadmap')}>🗺️ Access Roadmap</button>
+          </div>
+        </div>
+
+        {/* Top Widgets Row (Features 8, 9, 10) */}
+        <div className="grid-3 stagger-children" style={{ marginBottom: 32 }}>
+          {/* F2: AI Recommendation */}
+          <div className="glass dashboard__chart-card" style={{ padding: 20 }}>
+            <h4 style={{ color: 'var(--clr-primary)', marginBottom: 10, textTransform: 'uppercase' }}>🤖 AI Recommendation</h4>
+            {recommendedSkill ? (
+              <>
+                <p style={{ fontSize: '0.9rem', marginBottom: 10 }}>Optimal next skill to acquire:</p>
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: 12, borderRadius: 8 }}>
+                  <strong>{recommendedSkill.skill}</strong> ({recommendedSkill.levelNeeded})
+                  <div style={{ fontSize: '0.8rem', color: 'var(--clr-text-muted)', marginTop: 4 }}>Priority: {recommendedSkill.priority}</div>
+                </div>
+              </>
+            ) : (
+              <p>You have mastered all required skills!</p>
+            )}
+          </div>
+          
+          {/* F10: Focus Timer */}
+          <div className="glass dashboard__chart-card" style={{ padding: 20, textAlign: 'center' }}>
+            <h4 style={{ color: 'var(--clr-secondary)', marginBottom: 10, textTransform: 'uppercase' }}>⏱️ Focus Mode</h4>
+            <div style={{ width: 100, margin: '0 auto', marginBottom: 16 }}>
+              <CircularProgressbar 
+                value={(1 - timeLeft / 1500) * 100} 
+                text={formatTime(timeLeft)}
+                styles={buildStyles({
+                  textColor: '#fff',
+                  pathColor: 'var(--clr-secondary)',
+                  trailColor: 'rgba(255,255,255,0.1)'
+                })}
+              />
+            </div>
+            <button className="btn btn-sm btn-secondary" onClick={() => setTimerActive(!timerActive)}>
+              {timerActive ? 'Pause Neural Link' : 'Start Focus Session'}
+            </button>
+          </div>
+
+          {/* F8: Daily Challenge */}
+          <div className="glass dashboard__chart-card" style={{ padding: 20 }}>
+            <h4 style={{ color: 'var(--clr-emerald)', marginBottom: 10, textTransform: 'uppercase' }}>⚡ Daily Challenge</h4>
+            <p style={{ fontSize: '0.9rem', marginBottom: 16 }}>Read an article on Quantum Cryptography to earn 20 XP.</p>
+            <button className="btn btn-sm btn-emerald" onClick={() => {
+              addXP(20);
+              awardBadge('Daily Scholar 📚');
+              confetti({ particleCount: 50, spread: 60 });
+            }}>Complete Challenge</button>
+          </div>
+        </div>
+
+        {/* Second Widgets Row (Features 7, 9) */}
+        <div className="grid-2 stagger-children" style={{ marginBottom: 32 }}>
+          {/* F9: Peer Leaderboard */}
+          <div className="glass dashboard__chart-card" style={{ padding: 20 }}>
+            <h4 style={{ color: 'var(--clr-accent)', marginBottom: 10, textTransform: 'uppercase' }}>🏆 Global Leaderboard</h4>
+            <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.9rem' }}>
+              <li style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><span>1. CyberMage</span> <span>15,400 XP</span></li>
+              <li style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><span>2. NeonNinja</span> <span>14,200 XP</span></li>
+              <li style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'var(--clr-primary)', fontWeight: 'bold' }}><span>142. {profile.name || 'You'}</span> <span>{profile.xp || 0} XP</span></li>
+            </ul>
+          </div>
+
+          {/* F7: Exportable Resume */}
+          <div className="glass dashboard__chart-card" style={{ padding: 20, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <h4 style={{ color: 'var(--clr-primary)', marginBottom: 10, textTransform: 'uppercase' }}>📄 Neural Resume</h4>
+            <p style={{ fontSize: '0.9rem', marginBottom: 16, textAlign: 'center' }}>Generate a sleek PDF resume based on your verified skills and target roles.</p>
+            <button className="btn btn-primary" onClick={() => alert('PDF generation initialized! (Mocked)')}>
+              Export Resume PDF
+            </button>
           </div>
         </div>
 
@@ -82,7 +188,7 @@ export default function Dashboard() {
               className={`dashboard__tab ${activeTab === tab ? 'dashboard__tab--active' : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === 'overview' ? '📊 Overview' : tab === 'gaps' ? '📚 Skills to Learn' : '✅ Mastered Skills'}
+              {tab === 'overview' ? '📊 Overview' : tab === 'gaps' ? '📚 Learning Queue' : '✅ Mastered'}
             </button>
           ))}
         </div>
@@ -141,16 +247,6 @@ export default function Dashboard() {
                     <span style={{ color: 'var(--clr-emerald)' }}>✓ {gap.masteredCount} mastered</span>
                     <span style={{ color: 'var(--clr-text-dim)' }}>· {gap.toLearn.length} to learn</span>
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
-                    {gap.toLearn.slice(0, 4).map(t => (
-                      <span key={t.skill} className="badge badge-high" style={{ fontSize: '0.72rem' }}>{t.skill}</span>
-                    ))}
-                    {gap.toLearn.length > 4 && (
-                      <span className="badge" style={{ fontSize: '0.72rem', background: 'rgba(255,255,255,0.05)' }}>
-                        +{gap.toLearn.length - 4} more
-                      </span>
-                    )}
-                  </div>
                 </div>
               ))}
             </div>
@@ -164,14 +260,6 @@ export default function Dashboard() {
               <p style={{ color: 'var(--clr-text-muted)', fontSize: '0.9rem' }}>
                 {sortedToLearn.length} skills identified across your {selectedJobs.length} target career{selectedJobs.length !== 1 ? 's' : ''}
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <label className="form-label" style={{ margin: 0 }}>Sort by</label>
-                <select className="form-select" style={{ width: 140 }} value={sortBy} onChange={e => setSortBy(e.target.value)}>
-                  <option value="priority">Priority</option>
-                  <option value="level">Level Needed</option>
-                  <option value="jobs">Most Jobs Need</option>
-                </select>
-              </div>
             </div>
 
             <div className="gaps-table glass">
@@ -182,7 +270,6 @@ export default function Dashboard() {
                     <th>Priority</th>
                     <th>Level Needed</th>
                     <th>Your Level</th>
-                    <th>Needed For</th>
                     <th>Resources</th>
                   </tr>
                 </thead>
@@ -207,31 +294,15 @@ export default function Dashboard() {
                             : <span style={{ color: 'var(--clr-text-dim)', fontSize: '0.8rem' }}>Not started</span>
                           }
                         </td>
-                        <td style={{ fontSize: '0.78rem', color: 'var(--clr-text-muted)' }}>
-                          {item.jobs.slice(0, 2).join(', ')}{item.jobs.length > 2 ? ` +${item.jobs.length - 2}` : ''}
-                        </td>
                         <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                          {resources.slice(0, 1).map(r => (
-                            <a
-                              key={r.url}
-                              href={r.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="btn btn-ghost btn-sm"
-                              style={{ fontSize: '0.75rem' }}
-                            >
-                              {r.free ? '🆓' : '💰'} {r.type}
-                            </a>
-                          ))}
                           <a
                             href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.skill + ' tutorial')}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-ghost btn-sm"
-                            style={{ fontSize: '0.75rem', color: '#ff003c' }}
-                            title="Search YouTube Tutorials"
+                            style={{ fontSize: '0.75rem', color: '#00f3ff' }}
                           >
-                            ▶️ Video
+                            ▶️ Neural Download
                           </a>
                         </td>
                       </tr>
@@ -250,32 +321,19 @@ export default function Dashboard() {
               <p style={{ color: 'var(--clr-text-muted)', fontSize: '0.9rem' }}>
                 {profile.skills?.length || 0} skills in your current toolkit
               </p>
-              <button className="btn btn-secondary btn-sm" onClick={() => navigate('/profile')}>
-                + Add More Skills
-              </button>
             </div>
-
             {profile.skills?.length === 0 ? (
               <div className="glass" style={{ textAlign: 'center', padding: 48 }}>
                 <div className="animate-float" style={{ fontSize: '3.5rem', marginBottom: 16 }}>📭</div>
                 <h3 style={{ fontSize: '1.2rem', marginBottom: 8 }}>Your toolkit is empty</h3>
-                <p style={{ color: 'var(--clr-text-muted)', marginBottom: 20 }}>Add the skills you already know to see what you should learn next.</p>
                 <button className="btn btn-primary" onClick={() => navigate('/profile')}>Update Profile</button>
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14 }}>
-                {profile.skills.map(s => {
-                  // How many jobs need this skill
-                  const neededFor = selectedJobs.filter(j =>
-                    j.skillsRequired.some(req => req.skill.toLowerCase() === s.skillName.toLowerCase())
-                  ).length;
-                  return (
+                {profile.skills.map(s => (
                     <div key={s.skillName} className="mastered-skill-card glass">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                         <SkillTag skillName={s.skillName} level={s.level} />
-                        {neededFor > 0 && (
-                          <span style={{ fontSize: '0.7rem', color: 'var(--clr-emerald)' }}>✓ {neededFor} job{neededFor !== 1 ? 's' : ''}</span>
-                        )}
                       </div>
                       <div>
                         <label className="form-label" style={{ marginBottom: 6 }}>Update Level</label>
@@ -289,8 +347,7 @@ export default function Dashboard() {
                         </select>
                       </div>
                     </div>
-                  );
-                })}
+                ))}
               </div>
             )}
           </div>
@@ -301,9 +358,9 @@ export default function Dashboard() {
           <button
             className="btn btn-ghost btn-sm"
             style={{ color: 'var(--clr-rose)', opacity: 0.6 }}
-            onClick={() => { if (confirm('Reset all profile data?')) { resetProfile(); navigate('/'); } }}
+            onClick={() => { if (confirm('Purge all neural data?')) { resetProfile(); navigate('/'); } }}
           >
-            🗑 Reset Profile
+            🗑 Purge Data
           </button>
         </div>
       </div>

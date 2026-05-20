@@ -4,6 +4,7 @@ import { useUser } from '../context/UserContext';
 import ProgressBar from '../components/ProgressBar';
 import { generateRoadmap, estimateLearningTime } from '../utils/skillEngine';
 import { getResourcesForSkill } from '../data/learningResources';
+import confetti from 'canvas-confetti';
 import './Roadmap.css';
 
 const STAGES = ['To Learn', 'Learning', 'Achieved'];
@@ -12,7 +13,7 @@ const STAGE_COLORS = { 'To Learn': 'primary', 'Learning': 'amber', 'Achieved': '
 
 export default function Roadmap() {
   const navigate = useNavigate();
-  const { profile, selectedJobs, hasProfile, skillProgress, updateSkillStatus, addMasteredSkill, removeSkill } = useUser();
+  const { profile, selectedJobs, hasProfile, skillProgress, updateSkillStatus, addMasteredSkill, removeSkill, addXP } = useUser();
   const [filterPriority, setFilterPriority] = useState('All');
   const [expandedSkill, setExpandedSkill] = useState(null);
 
@@ -61,6 +62,22 @@ export default function Roadmap() {
     }
   };
 
+  // Feature 4: Career Path Time Simulator
+  const totalWeeks = grouped['To Learn'].length * 3 + grouped['Learning'].length * 1.5;
+
+  // Feature 6: Skill Assessment Quiz Mock
+  const handleQuiz = (skill) => {
+    const passed = window.confirm(`Take the Neural Assessment for ${skill}?\n(Click OK to pass, Cancel to fail)`);
+    if (passed) {
+      alert(`Passed! You earned 100 XP and mastered ${skill}.`);
+      addXP(100);
+      handleStatusChange(skill, 'Achieved');
+      confetti({ particleCount: 150, spread: 80 });
+    } else {
+      alert(`Assessment failed. Keep studying ${skill}!`);
+    }
+  };
+
   return (
     <div className="roadmap page">
       <div className="container">
@@ -77,19 +94,47 @@ export default function Roadmap() {
           </button>
         </div>
 
+        {/* Top Feature Bar (Features 4 & 5) */}
+        <div className="grid-2 stagger-children" style={{ marginBottom: 24 }}>
+          {/* Feature 4: Time Simulator */}
+          <div className="glass" style={{ padding: 20 }}>
+            <h4 style={{ color: 'var(--clr-primary)', marginBottom: 10, textTransform: 'uppercase' }}>⏱️ Time Simulator</h4>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ fontSize: '2.5rem' }}>⏳</div>
+              <div>
+                <p style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>~{Math.round(totalWeeks)} Weeks Remaining</p>
+                <p style={{ fontSize: '0.85rem', color: 'var(--clr-text-muted)' }}>Estimated time to reach 100% mastery for your targeted roles.</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Feature 5: Real-Time Market Insights */}
+          <div className="glass" style={{ padding: 20 }}>
+            <h4 style={{ color: 'var(--clr-emerald)', marginBottom: 10, textTransform: 'uppercase' }}>📈 Market Insights</h4>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.9rem' }}>
+              {selectedJobs.map(job => (
+                <li key={job.jobTitle} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <span>{job.jobTitle}</span>
+                  <span style={{ color: 'var(--clr-emerald)', fontWeight: 'bold' }}>{job.avgSalary}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
         {/* Progress summary */}
         <div className="glass roadmap__progress animate-fadeInUp">
           <div className="roadmap__progress-stats">
             <div className="roadmap__progress-stat">
-              <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#6366f1' }}>{filtered.filter(i => i.status === 'To Learn').length}</span>
+              <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#00f3ff' }}>{grouped['To Learn'].length}</span>
               <span style={{ fontSize: '0.8rem', color: 'var(--clr-text-muted)' }}>To Learn</span>
             </div>
             <div className="roadmap__progress-stat">
-              <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f59e0b' }}>{filtered.filter(i => i.status === 'Learning').length}</span>
+              <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ffcc00' }}>{grouped['Learning'].length}</span>
               <span style={{ fontSize: '0.8rem', color: 'var(--clr-text-muted)' }}>Learning</span>
             </div>
             <div className="roadmap__progress-stat">
-              <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#10b981' }}>{totalAchieved}</span>
+              <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#00ff66' }}>{totalAchieved}</span>
               <span style={{ fontSize: '0.8rem', color: 'var(--clr-text-muted)' }}>Achieved</span>
             </div>
           </div>
@@ -155,9 +200,6 @@ export default function Roadmap() {
                             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                               <span className={`badge badge-${item.priority.toLowerCase()}`}>{item.priority}</span>
                               <span className={`badge badge-${item.levelNeeded.toLowerCase()}`}>{item.levelNeeded}</span>
-                              <span style={{ fontSize: '0.72rem', color: 'var(--clr-text-dim)', alignSelf: 'center' }}>
-                                ⏱ {estimateLearningTime(item.levelNeeded, item.isUpgrade)}
-                              </span>
                             </div>
                           </div>
                           <button
@@ -176,13 +218,22 @@ export default function Roadmap() {
                           Needed for: {item.jobs.slice(0, 2).join(', ')}{item.jobs.length > 2 ? ` +${item.jobs.length - 2}` : ''}
                         </div>
 
-                        {/* Expanded details */}
+                        {/* Feature 6: Skill Assessment (in expanded details) */}
                         {isExpanded && (
                           <div className="roadmap-card__expanded animate-fadeIn">
                             <div className="divider" style={{ margin: '12px 0' }} />
-                            <p style={{ fontSize: '0.8rem', color: 'var(--clr-text-muted)', marginBottom: 10 }}>
-                              📚 Learning Resources
-                            </p>
+                            
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                              <p style={{ fontSize: '0.8rem', color: 'var(--clr-text-muted)', margin: 0 }}>
+                                📚 Learning Resources
+                              </p>
+                              {stage !== 'Achieved' && (
+                                <button className="btn btn-sm btn-secondary" style={{ fontSize: '0.7rem' }} onClick={(e) => { e.stopPropagation(); handleQuiz(item.skill); }}>
+                                  🧠 Take Assessment
+                                </button>
+                              )}
+                            </div>
+                            
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                               {resources.slice(0, 3).map(r => (
                                 <a
@@ -202,11 +253,10 @@ export default function Roadmap() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="resource-link"
-                                style={{ color: '#ff003c' }}
+                                style={{ color: '#00f3ff' }}
                               >
                                 <span>▶️</span>
-                                <span style={{ flex: 1 }}>Search YouTube Tutorials</span>
-                                <span style={{ fontSize: '0.65rem', opacity: 0.6 }}>Video</span>
+                                <span style={{ flex: 1 }}>Neural Download (Video)</span>
                               </a>
                             </div>
                           </div>

@@ -10,6 +10,8 @@ const DEFAULT_PROFILE = {
   academicQualifications: [{ degree: '', field: '', year: '', institution: '' }],
   careerInterests: [],
   skills: [],
+  xp: 0,
+  badges: [],
 };
 
 export const UserProvider = ({ children }) => {
@@ -92,6 +94,18 @@ export const UserProvider = ({ children }) => {
     }));
   }, []);
 
+  const addXP = useCallback((amount) => {
+    setProfile(prev => ({ ...prev, xp: (prev.xp || 0) + amount }));
+  }, []);
+
+  const awardBadge = useCallback((badge) => {
+    setProfile(prev => {
+      const badges = prev.badges || [];
+      if (badges.includes(badge)) return prev;
+      return { ...prev, badges: [...badges, badge] };
+    });
+  }, []);
+
   return (
     <UserContext.Provider value={{
       profile,
@@ -105,6 +119,8 @@ export const UserProvider = ({ children }) => {
       updateSkillLevel,
       addMasteredSkill,
       removeSkill,
+      addXP,
+      awardBadge,
     }}>
       {children}
     </UserContext.Provider>

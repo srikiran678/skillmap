@@ -3039,6 +3039,43 @@ export const JOB_SKILLS_DB = [
     ],
     academicRelevance: ["Physics", "Mathematics", "Computer Science"],
     relatedJobs: ["Quantum Software Engineer", "Quantum Cryptographer"]
+  },
+  
+  // ── AI ETHICS ──
+  {
+    jobTitle: "AI Ethics Researcher",
+    domain: "Data & AI",
+    icon: "⚖️",
+    description: "Ensure AI systems are fair, transparent, and aligned with human values.",
+    avgSalary: "$110,000 – $160,000",
+    skillsRequired: [
+      { skill: "Machine Learning", levelNeeded: "Intermediate" },
+      { skill: "Ethics & Philosophy", levelNeeded: "Advanced" },
+      { skill: "Data Bias Detection", levelNeeded: "Advanced" },
+      { skill: "Python", levelNeeded: "Intermediate" },
+      { skill: "Regulatory Compliance", levelNeeded: "Intermediate" },
+      { skill: "Explainable AI (XAI)", levelNeeded: "Intermediate" }
+    ],
+    academicRelevance: ["Philosophy", "Law", "Computer Science", "Sociology"],
+    relatedJobs: ["AI Policy Analyst", "Responsible AI Engineer"]
+  },
+  
+  // ── SPATIAL COMPUTING ──
+  {
+    jobTitle: "Holographic UI Designer",
+    domain: "Design",
+    icon: "✨",
+    description: "Design 3D interfaces for spatial computing and augmented reality.",
+    avgSalary: "$100,000 – $150,000",
+    skillsRequired: [
+      { skill: "Spatial Design", levelNeeded: "Advanced" },
+      { skill: "3D Modeling", levelNeeded: "Intermediate" },
+      { skill: "Unity/Unreal Engine", levelNeeded: "Intermediate" },
+      { skill: "Human-Computer Interaction", levelNeeded: "Advanced" },
+      { skill: "Prototyping (Spline/Figma)", levelNeeded: "Intermediate" }
+    ],
+    academicRelevance: ["Design", "Architecture", "Human-Computer Interaction"],
+    relatedJobs: ["AR/VR Designer", "Metaverse Architect"]
   }
 ];
 
