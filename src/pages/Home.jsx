@@ -141,6 +141,148 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Trending AI Videos & Free Courses ── */}
+      <section className="section container">
+        <div className="section-header">
+          <p className="section-eyebrow">Futuristic Knowledge Streams</p>
+          <h2 className="section-title">Trending <span className="text-gradient">AI Videos & Free Courses</span></h2>
+          <p className="section-desc">Acquire critical AI literacy with curated video resources and industry-backed programs.</p>
+        </div>
+
+        <div className="home__ai-section" style={{ marginTop: 40, display: 'grid', gridTemplateColumns: '1fr', gap: '40px' }}>
+          
+          {/* Video stream tiles */}
+          <div>
+            <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: 20, fontSize: '1.4rem', color: 'var(--clr-primary)' }}>
+              🎥 Trending Video Broadcasts
+            </h3>
+            <div className="grid-3">
+              {[
+                {
+                  id: 'vid-google-essential',
+                  title: 'Google AI Essentials — Complete Overview',
+                  channel: 'Google Career Certificates',
+                  url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder embed link
+                  desc: 'A complete run-through of how to implement prompt engineering, boost workplace productivity, and use generative AI responsibly.',
+                  views: '1.2M views',
+                  time: '2 weeks ago'
+                },
+                {
+                  id: 'vid-andrew-ng',
+                  title: 'AI for Everyone: Core Concepts',
+                  channel: 'DeepLearning.AI',
+                  url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                  desc: 'Andrew Ng breaks down how deep learning algorithms function, where machine learning can be applied, and its true limits.',
+                  views: '940K views',
+                  time: '1 month ago'
+                },
+                {
+                  id: 'vid-generative-ai',
+                  title: 'Generative AI Roadmap in 2026',
+                  channel: 'Neural Academy',
+                  url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                  desc: 'The complete mathematical and developmental guide to mastery of Large Language Models (LLMs), Transformer networks, and diffusion tools.',
+                  views: '320K views',
+                  time: '3 days ago'
+                }
+              ].map(vid => (
+                <div key={vid.id} className="glass" style={{ padding: 0, overflow: 'hidden', borderRadius: 'var(--radius-xl)', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
+                    <iframe
+                      src={vid.url}
+                      title={vid.title}
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div style={{ padding: 20, display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--clr-primary)', fontWeight: 700 }}>
+                      {vid.channel}
+                    </span>
+                    <h4 style={{ fontSize: '1rem', marginTop: 6, marginBottom: 8, fontWeight: 700, lineHeight: 1.4 }}>
+                      {vid.title}
+                    </h4>
+                    <p style={{ fontSize: '0.82rem', color: 'var(--clr-text-muted)', marginBottom: 14, flex: 1 }}>
+                      {vid.desc}
+                    </p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--clr-text-dim)' }}>
+                      <span>👁️ {vid.views}</span>
+                      <span>⏱️ {vid.time}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Free Courses */}
+          <div style={{ marginTop: 20 }}>
+            <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: 20, fontSize: '1.4rem', color: 'var(--clr-accent)' }}>
+              🎓 Accredited Free AI Courses
+            </h3>
+            <div className="grid-3">
+              {[
+                {
+                  title: 'Google AI Essentials',
+                  provider: 'Google',
+                  skills: ['Prompt Engineering', 'Productivity', 'Responsible AI'],
+                  desc: 'Learn practical AI skills to help you work more efficiently and solve daily challenges. Designed for all experience levels.',
+                  duration: '9 hours',
+                  link: 'https://grow.google/ai-essentials/'
+                },
+                {
+                  title: 'AI for Beginners Curriculum',
+                  provider: 'Microsoft',
+                  skills: ['Machine Learning', 'Neural Networks', 'Computer Vision'],
+                  desc: 'A comprehensive 24-lesson curriculum designed for developers starting out in artificial intelligence.',
+                  duration: '12 weeks',
+                  link: 'https://github.com/microsoft/AI-For-Beginners'
+                },
+                {
+                  title: 'Elements of AI',
+                  provider: 'University of Helsinki',
+                  skills: ['AI Concepts', 'Algorithms', 'Societal Impact'],
+                  desc: 'Free online course for anyone who wants to know what AI is, what is possible with AI, and how it affects our lives.',
+                  duration: '6 weeks',
+                  link: 'https://www.elementsofai.com/'
+                }
+              ].map((course, idx) => (
+                <div key={idx} className="glass" style={{ padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                      <span className="badge badge-intermediate" style={{ textTransform: 'uppercase', fontSize: '0.72rem' }}>
+                        {course.provider}
+                      </span>
+                      <span style={{ fontSize: '0.78rem', color: 'var(--clr-text-dim)' }}>⏱️ {course.duration}</span>
+                    </div>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 8 }}>{course.title}</h4>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--clr-text-muted)', marginBottom: 16 }}>{course.desc}</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
+                      {course.skills.map(skill => (
+                        <span key={skill} className="badge" style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'var(--clr-border)', color: 'var(--clr-text-muted)', fontSize: '0.68rem', padding: '3px 8px' }}>
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <a
+                    href={course.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-secondary btn-sm"
+                    style={{ textAlign: 'center', textDecoration: 'none', display: 'block' }}
+                  >
+                    Start Course 🚀
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       {/* ── Features ── */}
       <section className="section container">
         <div className="section-header">

@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "jetro": {
+      "type": "stdio",
+      "command": "C:\\Users\\sriki\\.jetro\\runtime\\node-win32-x64.exe",
+      "args": [
+        "C:\\Users\\sriki\\.jetro\\mcp-server\\index.js"
+      ],
+      "env": {
+        "JET_WORKSPACE": "d:\\skill map",
+        "JET_API_URL": "https://api.jetro.ai",
+        "JET_JWT": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImM5YTBjMWRlYWEyN2JjNjMyNTUzYmM4MWEyMmQ4NzY1MWM3MTMyY2IiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vamV0cm8tY2RhZWYiLCJhdWQiOiJqZXRyby1jZGFlZiIsImF1dGhfdGltZSI6MTc4MDE1MTgxMCwidXNlcl9pZCI6IkNTaGtpUklOTlRoMjZtZnJnSVNPOTNFU2o0bDIiLCJzdWIiOiJDU2hraVJJTk5UaDI2bWZyZ0lTTzkzRVNqNGwyIiwiaWF0IjoxNzgwMTUxODEwLCJleHAiOjE3ODAxNTU0MTAsImVtYWlsIjoia2FsdXZveWFraXJhbjc4QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImthbHV2b3lha2lyYW43OEBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ._A9cb82zB3Q6TchKj2ukOMjKURDX_rIRPWLmtiQhcWDStknUhQT4e8YHohCgr3X4cGLrh69p7lQWlBhPXpJFBY4K-CZu4I9g4ANrkVlT7xzbGCk9qa9WVL20TLUSJrixp8sK7-v4wQVbpYEjww_ubQNIPkezZ3gTi27cYzGf_YlsTevBFeKpHUa8niEgXsarK-tJMTd7AU-UsdIGy8YKMjKVTFwwamLd7Q504p4qC4DH0cQ19JXqpSx4QsMMHn8rR5Er-Moy5qI3CqYPrIhSkGz5EGO_RriDkUBwGPpxuSydIf26aSYCqVYSfXcjmJbMyKwdOifZmV3NJ6AebpiZ5w",
+        "PATH": "C:\\Users\\sriki\\.jetro\\runtime;C:\\Python314\\Scripts\\;C:\\Python314\\;C:\\Program Files\\Eclipse Adoptium\\jdk-25.0.3.9-hotspot\\bin;C:\\Program Files\\Common Files\\Oracle\\Java\\javapath;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;D:\\java\\bin;C:\\ProgramData\\chocolatey\\bin;D:\\Git\\cmd;C:\\Program Files\\Docker\\Docker\\resources\\bin;D:\\nodejs\\;C:\\Users\\sriki\\AppData\\Local\\hermes\\hermes-agent\\venv\\Scripts;C:\\Users\\sriki\\.local\\bin;C:\\Users\\sriki\\AppData\\Local\\Microsoft\\WindowsApps;D:\\Microsoft VS Code\\bin;C:\\Users\\sriki\\AppData\\Local\\Python\\bin;D:\\PyCharm 2026.1\\bin;D:\\IntelliJ IDEA 2026.1\\bin;C:\\Users\\sriki\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin;D:\\Antigravity IDE\\bin;C:\\Users\\sriki\\AppData\\Local\\Programs\\Ollama;C:\\Users\\sriki\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BurntSushi.ripgrep.MSVC_Microsoft.Winget.Source_8wekyb3d8bbwe\\ripgrep-15.1.0-x86_64-pc-windows-msvc;C:\\Users\\sriki\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin;C:\\Users\\sriki\\AppData\\Roaming\\npm"
+      }
+    }
+  }
+}
