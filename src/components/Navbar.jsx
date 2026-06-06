@@ -9,12 +9,16 @@ const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/roadmap', label: 'Roadmap', icon: '🗺️' },
   { to: '/mindmap', label: 'Mind Map', icon: '🧠' },
+  { to: '/learn', label: 'Learn', icon: '📚' },
+  { to: '/challenges', label: 'Arena', icon: '⚔️' },
+  { to: '/certificates', label: 'Vault', icon: '🏆' },
+  { to: '/hub', label: 'Game Hub', icon: '🎮' },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { hasProfile } = useUser();
+  const { hasProfile, profile } = useUser();
   const location = useLocation();
 
   useEffect(() => {
@@ -43,7 +47,7 @@ export default function Navbar() {
             >
               <span className="navbar__link-icon">{link.icon}</span>
               <span>{link.label}</span>
-              {(link.to === '/dashboard' || link.to === '/roadmap' || link.to === '/mindmap') && !hasProfile && (
+              {(link.to === '/dashboard' || link.to === '/roadmap' || link.to === '/mindmap' || link.to === '/learn' || link.to === '/challenges' || link.to === '/certificates') && !hasProfile && (
                 <span className="navbar__lock">🔒</span>
               )}
             </NavLink>
@@ -51,9 +55,15 @@ export default function Navbar() {
         </nav>
 
         <div className="navbar__actions">
+          {hasProfile && (
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.82rem', color: 'var(--clr-text-muted)' }}>
+              <span style={{ color: '#ff8c00' }}>🔥{profile?.streak_current || 0}</span>
+              <span style={{ color: 'var(--clr-primary)' }}>⚡{profile?.xp || 0}</span>
+            </span>
+          )}
           {hasProfile ? (
-            <NavLink to="/dashboard" className="btn btn-primary btn-sm">
-              My Dashboard
+            <NavLink to="/hub" className="btn btn-primary btn-sm">
+              🎮 Game Hub
             </NavLink>
           ) : (
             <NavLink to="/profile" className="btn btn-primary btn-sm">

@@ -8,14 +8,30 @@ import RadarChart from '../components/RadarChart';
 import { DoughnutChart, JobMatchBar } from '../components/ProgressChart';
 import { computeAllGaps, computeProfileStats, generateRoadmap } from '../utils/skillEngine';
 import { getResourcesForSkill } from '../data/learningResources';
+import { getXPProgressForLevel, LEVEL_TITLES, computeLeagueData } from '../utils/gamificationEngine';
 import confetti from 'canvas-confetti';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import './Dashboard.css';
 
+const SKILL_TO_TRACK_MAP = {
+  'html': 'web-fundamentals',
+  'html5': 'web-fundamentals',
+  'css': 'web-fundamentals',
+  'css3': 'web-fundamentals',
+  'javascript': 'web-fundamentals',
+  'js': 'web-fundamentals',
+  'python': 'python-essentials',
+  'statistics': 'data-science',
+  'stats': 'data-science',
+  'system design': 'system-design',
+  'dsa': 'dsa',
+  'arrays': 'dsa'
+};
+
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { profile, selectedJobs, hasProfile, resetProfile, updateSkillLevel, addXP, awardBadge } = useUser();
+  const { profile, selectedJobs, hasProfile, resetProfile, updateSkillLevel, addXP, awardBadge, extendStreak, dailyQuests, claimQuestReward, trackFocusSession } = useUser();
   const [activeTab, setActiveTab] = useState('overview');
   const [sortBy, setSortBy] = useState('priority');
 
@@ -31,10 +47,11 @@ export default function Dashboard() {
       setTimerActive(false);
       addXP(50);
       awardBadge('Focus Master ⏱️');
+      trackFocusSession();
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     }
     return () => clearInterval(interval);
-  }, [timerActive, timeLeft, addXP, awardBadge]);
+  }, [timerActive, timeLeft, addXP, awardBadge, trackFocusSession]);
 
   const formatTime = (s) => {
     const mins = Math.floor(s / 60);
@@ -88,16 +105,47 @@ export default function Dashboard() {
             <p style={{ color: 'var(--clr-text-muted)', marginTop: 6 }}>
               {profile.careerInterests?.length} targeted nodes · {profile.skills?.length} integrated skills
             </p>
-            <div style={{ marginTop: 12, display: 'flex', gap: 10, alignItems: 'center' }}>
-              <span className="badge badge-high" style={{ padding: '6px 12px', fontSize: '0.9rem' }}>XP: {profile.xp || 0}</span>
-              {profile.badges?.map(b => (
-                <span key={b} className="badge badge-advanced" style={{ padding: '6px 12px' }}>{b}</span>
-              ))}
-            </div>
+            {/* Live XP Level Bar */}
+            {(() => {
+              const { level, current, needed, percent } = getXPProgressForLevel(profile.xp || 0);
+              return (
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 8, flexWrap: 'wrap' }}>
+                    <span className="badge badge-high" style={{ padding: '5px 12px', fontSize: '0.85rem' }}>
+                      ⚡ {profile.xp || 0} XP
+                    </span>
+                    <span className="badge badge-advanced" style={{ padding: '5px 12px', fontSize: '0.85rem' }}>
+                      Lv.{level} {LEVEL_TITLES[level] || ''}
+                    </span>
+                    <span style={{ color: '#ff8c00', fontSize: '0.9rem', fontWeight: 700 }}>
+                      🔥 {profile.streak_current || 0} day streak
+                    </span>
+                    <span style={{ color: '#ffd700', fontSize: '0.85rem' }}>
+                      💰 {profile.coins || 0} coins
+                    </span>
+                    {profile.badges?.map(b => (
+                      <span key={b} className="badge badge-intermediate" style={{ padding: '5px 10px', fontSize: '0.78rem' }}>{b}</span>
+                    ))}
+                  </div>
+                  <div style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden', maxWidth: 280 }}>
+                    <div style={{
+                      height: '100%', borderRadius: 999,
+                      background: 'linear-gradient(90deg, #00f3ff, #b026ff)',
+                      width: `${percent}%`, transition: 'width 1s ease',
+                      boxShadow: '0 0 8px rgba(0,243,255,0.5)'
+                    }} />
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--clr-text-muted)', marginTop: 4 }}>
+                    {current} / {needed} XP to Level {level + 1}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <button className="btn btn-secondary btn-sm" onClick={() => navigate('/profile')}>✏️ Reconfigure</button>
-            <button className="btn btn-primary btn-sm" onClick={() => navigate('/roadmap')}>🗺️ Access Roadmap</button>
+            <button className="btn btn-primary btn-sm" onClick={() => navigate('/hub')}>🎮 Game Hub</button>
+            <button className="btn btn-secondary btn-sm" onClick={() => navigate('/roadmap')}>🗺️ Roadmap</button>
           </div>
         </div>
 
@@ -138,28 +186,62 @@ export default function Dashboard() {
             </button>
           </div>
 
-          {/* F8: Daily Challenge */}
+          {/* F8: Daily Challenge / Quest preview */}
           <div className="glass dashboard__chart-card" style={{ padding: 20 }}>
-            <h4 style={{ color: 'var(--clr-emerald)', marginBottom: 10, textTransform: 'uppercase' }}>⚡ Daily Challenge</h4>
-            <p style={{ fontSize: '0.9rem', marginBottom: 16 }}>Read an article on Quantum Cryptography to earn 20 XP.</p>
-            <button className="btn btn-sm btn-emerald" onClick={() => {
-              addXP(20);
-              awardBadge('Daily Scholar 📚');
-              confetti({ particleCount: 50, spread: 60 });
-            }}>Complete Challenge</button>
+            <h4 style={{ color: 'var(--clr-emerald)', marginBottom: 10, textTransform: 'uppercase' }}>⚡ Daily Quests</h4>
+            {dailyQuests.slice(0, 2).map(q => (
+              <div key={q.id} style={{ marginBottom: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: 4 }}>
+                  <span>{q.icon} {q.name}</span>
+                  <span style={{ color: q.completed ? 'var(--clr-emerald)' : 'var(--clr-text-muted)', fontSize: '0.78rem' }}>
+                    {q.claimed ? '✅' : q.completed ? '🎁 Claim!' : `+${q.reward_xp}XP`}
+                  </span>
+                </div>
+                <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden' }}>
+                  <div style={{
+                    height: '100%', borderRadius: 999,
+                    background: q.completed ? 'var(--grad-emerald)' : 'var(--grad-primary)',
+                    width: `${Math.min(100, ((q.progress || 0) / q.goal) * 100)}%`
+                  }} />
+                </div>
+              </div>
+            ))}
+            <button className="btn btn-sm btn-emerald" onClick={() => navigate('/hub')} style={{ marginTop: 8, width: '100%' }}>
+              View All Quests →
+            </button>
           </div>
         </div>
 
         {/* Second Widgets Row (Features 7, 9) */}
         <div className="grid-2 stagger-children" style={{ marginBottom: 32 }}>
-          {/* F9: Peer Leaderboard */}
+          {/* F9: Peer Leaderboard (live) */}
           <div className="glass dashboard__chart-card" style={{ padding: 20 }}>
             <h4 style={{ color: 'var(--clr-accent)', marginBottom: 10, textTransform: 'uppercase' }}>🏆 Global Leaderboard</h4>
-            <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.9rem' }}>
-              <li style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><span>1. CyberMage</span> <span>15,400 XP</span></li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><span>2. NeonNinja</span> <span>14,200 XP</span></li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'var(--clr-primary)', fontWeight: 'bold' }}><span>142. {profile.name || 'You'}</span> <span>{profile.xp || 0} XP</span></li>
-            </ul>
+            {(() => {
+              const { peers, userRank, league } = computeLeagueData(profile.xp || 0, profile.weekly_xp || 0);
+              return (
+                <>
+                  <div style={{ fontSize: '0.78rem', color: league.color, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    {league.icon} {league.name} League · Rank #{userRank}
+                  </div>
+                  <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.88rem' }}>
+                    {peers.slice(0, 3).map((p, i) => (
+                      <li key={p.name+i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                        <span>{i===0?'🥇':i===1?'🥈':'🥉'} {p.name}</span>
+                        <span>{p.xp} XP</span>
+                      </li>
+                    ))}
+                    <li style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', color: 'var(--clr-primary)', fontWeight: 'bold' }}>
+                      <span>#{userRank} {profile.name || 'You'}</span>
+                      <span>{profile.weekly_xp || 0} XP</span>
+                    </li>
+                  </ul>
+                  <button className="btn btn-ghost btn-sm" onClick={() => navigate('/hub')} style={{ marginTop: 8, width: '100%', color: 'var(--clr-accent)' }}>
+                    Full Leaderboard →
+                  </button>
+                </>
+              );
+            })()}
           </div>
 
           {/* F7: Exportable Resume */}
@@ -275,7 +357,6 @@ export default function Dashboard() {
                 </thead>
                 <tbody>
                   {sortedToLearn.map(item => {
-                    const resources = getResourcesForSkill(item.skill);
                     return (
                       <tr key={item.skill} className="gaps-table__row">
                         <td>
@@ -295,6 +376,21 @@ export default function Dashboard() {
                           }
                         </td>
                         <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          {(() => {
+                            const trackId = SKILL_TO_TRACK_MAP[item.skill.toLowerCase()];
+                            if (trackId) {
+                              return (
+                                <button
+                                  className="btn btn-primary btn-sm"
+                                  style={{ fontSize: '0.75rem', padding: '6px 12px' }}
+                                  onClick={() => navigate('/learn')}
+                                >
+                                  📖 Learn
+                                </button>
+                              );
+                            }
+                            return null;
+                          })()}
                           <a
                             href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.skill + ' tutorial')}`}
                             target="_blank"
