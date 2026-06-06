@@ -278,6 +278,23 @@ export default function LearnPage() {
   const [activeLessonId, setActiveLessonId] = useState(null);
   const [quizPassed, setQuizPassed] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [watchlist, setWatchlist] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('skillmap_watchlist') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  const toggleWatchlist = (lessonId) => {
+    const next = watchlist.includes(lessonId)
+      ? watchlist.filter(id => id !== lessonId)
+      : [...watchlist, lessonId];
+    setWatchlist(next);
+    localStorage.setItem('skillmap_watchlist', JSON.stringify(next));
+  };
+
   const activeTrack = LESSON_TRACKS.find(t => t.id === activeTrackId);
   const activeLesson = activeTrack?.lessons.find(l => l.id === activeLessonId);
 
@@ -339,6 +356,13 @@ export default function LearnPage() {
     const certs = computeEarnedCertificates(completedLessons);
     const earnedCerts = certs.filter(c => c.earned).length;
 
+    const allLessons = LESSON_TRACKS.flatMap(t => t.lessons.map(l => ({ ...l, trackId: t.id, trackTitle: t.title, trackIcon: t.icon })));
+    const searchedLessons = searchQuery.trim() === ''
+      ? []
+      : allLessons.filter(l => l.title.toLowerCase().includes(searchQuery.toLowerCase()) || l.content.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const bookmarkedLessons = allLessons.filter(l => watchlist.includes(l.id));
+
     return (
       <div className="learn page">
         <div className="container">
@@ -350,57 +374,156 @@ export default function LearnPage() {
               W3Schools-style interactive lessons with live code editors, quizzes, and certificates.
             </p>
 
-            {/* Progress bar */}
-            <div className="learn__progress-header glass" style={{ padding: '16px 24px' }}>
-              <div>
-                <div style={{ fontWeight: 700, marginBottom: 4 }}>Overall Progress</div>
-                <div style={{ fontSize: '0.82rem', color: 'var(--clr-text-muted)' }}>
-                  {doneLessons} of {totalLessons} lessons complete · {earnedCerts} certificates earned
-                </div>
-              </div>
-              <div className="learn__progress-bar-wrap">
-                <div className="learn__progress-bar-fill" style={{ width: `${totalLessons ? Math.round((doneLessons/totalLessons)*100) : 0}%` }} />
-              </div>
-              <span style={{ fontFamily: 'var(--font-display)', color: 'var(--clr-primary)', fontSize: '1.1rem' }}>
-                {totalLessons ? Math.round((doneLessons/totalLessons)*100) : 0}%
-              </span>
+            {/* Search Input */}
+            <div style={{ marginBottom: 24 }}>
+              <input
+                type="text"
+                placeholder="🔍 Search lessons, code, or topics..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '14px 20px',
+                  borderRadius: 'var(--radius-lg)',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid var(--clr-border)',
+                  color: 'white',
+                  fontSize: '0.95rem',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
             </div>
-          </div>
 
-          <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--clr-text-dim)', marginBottom: 16, fontWeight: 700 }}>
-            Choose a Learning Track
-          </div>
-
-          <div className="learn__tracks">
-            {LESSON_TRACKS.map(track => {
-              const { done, total, pct } = getTrackProgress(track);
-              return (
-                <div
-                  key={track.id}
-                  className="learn__track-card animate-fadeInUp"
-                  onClick={() => { setActiveTrackId(track.id); setActiveLessonId(track.lessons[0].id); setQuizPassed(false); }}
-                  style={{ '--track-gradient': track.gradient }}
-                >
-                  <div className="learn__track-card::before" style={{ background: track.gradient }} />
-                  <span className="learn__track-icon">{track.icon}</span>
-                  <div className="learn__track-title">{track.title}</div>
-                  <div className="learn__track-desc">{track.desc}</div>
-                  <div className="learn__track-meta">
-                    <span>{total} lesson{total !== 1 ? 's' : ''}</span>
-                    <span style={{ color: done === total && total > 0 ? 'var(--clr-emerald)' : 'var(--clr-text-dim)' }}>
-                      {done === total && total > 0 ? '✅ Complete' : `${done}/${total} done`}
-                    </span>
-                  </div>
-                  <div className="learn__track-progress-bar">
-                    <div
-                      className="learn__track-progress-fill"
-                      style={{ width: `${pct}%`, background: track.gradient }}
-                    />
+            {/* Progress bar */}
+            {searchQuery.trim() === '' && (
+              <div className="learn__progress-header glass" style={{ padding: '16px 24px' }}>
+                <div>
+                  <div style={{ fontWeight: 700, marginBottom: 4 }}>Overall Progress</div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--clr-text-muted)' }}>
+                    {doneLessons} of {totalLessons} lessons complete · {earnedCerts} certificates earned
                   </div>
                 </div>
-              );
-            })}
+                <div className="learn__progress-bar-wrap">
+                  <div className="learn__progress-bar-fill" style={{ width: `${totalLessons ? Math.round((doneLessons/totalLessons)*100) : 0}%` }} />
+                </div>
+                <span style={{ fontFamily: 'var(--font-display)', color: 'var(--clr-primary)', fontSize: '1.1rem' }}>
+                  {totalLessons ? Math.round((doneLessons/totalLessons)*100) : 0}%
+                </span>
+              </div>
+            )}
           </div>
+
+          {/* Search Results */}
+          {searchQuery.trim() !== '' && (
+            <div className="animate-fadeIn" style={{ marginBottom: 40 }}>
+              <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--clr-text-dim)', marginBottom: 16, fontWeight: 700 }}>
+                Search Results ({searchedLessons.length})
+              </div>
+              {searchedLessons.length > 0 ? (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                  {searchedLessons.map(l => {
+                    const done = !!completedLessons[l.id]?.completed;
+                    return (
+                      <div
+                        key={l.id}
+                        className="glass"
+                        onClick={() => { setActiveTrackId(l.trackId); setActiveLessonId(l.id); setQuizPassed(false); }}
+                        style={{ padding: 20, cursor: 'pointer', border: '1px solid var(--clr-border)', borderRadius: 'var(--radius-xl)' }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span className="badge" style={{ fontSize: '0.7rem', textTransform: 'uppercase' }}>{l.trackIcon} {l.trackTitle}</span>
+                          {done && <span style={{ color: 'var(--clr-emerald)', fontSize: '0.8rem' }}>✅ Done</span>}
+                        </div>
+                        <h4 style={{ fontSize: '1rem', marginTop: 10, marginBottom: 6, fontWeight: 700 }}>{l.title}</h4>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: 'var(--clr-text-dim)' }}>
+                          <span>⏱️ {l.duration}</span>
+                          <span>⚡ +{l.xp} XP</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="glass" style={{ padding: '24px 32px', textAlign: 'center', color: 'var(--clr-text-muted)', borderRadius: 'var(--radius-xl)' }}>
+                  No lessons found matching "{searchQuery}"
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Watchlist / Bookmarks */}
+          {bookmarkedLessons.length > 0 && searchQuery.trim() === '' && (
+            <div style={{ marginBottom: 40 }}>
+              <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--clr-text-dim)', marginBottom: 16, fontWeight: 700 }}>
+                ⭐ Bookmarked Lessons ({bookmarkedLessons.length})
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                {bookmarkedLessons.map(l => {
+                  const done = !!completedLessons[l.id]?.completed;
+                  return (
+                    <div
+                      key={l.id}
+                      className="glass"
+                      onClick={() => { setActiveTrackId(l.trackId); setActiveLessonId(l.id); setQuizPassed(false); }}
+                      style={{ padding: 18, cursor: 'pointer', border: '1px solid var(--clr-border)', borderRadius: 'var(--radius-lg)' }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span className="badge" style={{ fontSize: '0.68rem', textTransform: 'uppercase', background: 'rgba(255,255,255,0.05)', borderColor: 'transparent' }}>
+                          {l.trackIcon} {l.trackTitle}
+                        </span>
+                        {done && <span style={{ color: 'var(--clr-emerald)', fontSize: '0.75rem' }}>✅ Done</span>}
+                      </div>
+                      <h4 style={{ fontSize: '0.92rem', marginTop: 8, marginBottom: 6, fontWeight: 700 }}>{l.title}</h4>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--clr-text-dim)' }}>
+                        <span>⏱️ {l.duration}</span>
+                        <span>⚡ +{l.xp} XP</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {searchQuery.trim() === '' && (
+            <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--clr-text-dim)', marginBottom: 16, fontWeight: 700 }}>
+              Choose a Learning Track
+            </div>
+          )}
+
+          {searchQuery.trim() === '' && (
+            <div className="learn__tracks">
+              {LESSON_TRACKS.map(track => {
+                const { done, total, pct } = getTrackProgress(track);
+                return (
+                  <div
+                    key={track.id}
+                    className="learn__track-card animate-fadeInUp"
+                    onClick={() => { setActiveTrackId(track.id); setActiveLessonId(track.lessons[0].id); setQuizPassed(false); }}
+                    style={{ '--track-gradient': track.gradient }}
+                  >
+                    <div className="learn__track-card::before" style={{ background: track.gradient }} />
+                    <span className="learn__track-icon">{track.icon}</span>
+                    <div className="learn__track-title">{track.title}</div>
+                    <div className="learn__track-desc">{track.desc}</div>
+                    <div className="learn__track-meta">
+                      <span>{total} lesson{total !== 1 ? 's' : ''}</span>
+                      <span style={{ color: done === total && total > 0 ? 'var(--clr-emerald)' : 'var(--clr-text-dim)' }}>
+                        {done === total && total > 0 ? '✅ Complete' : `${done}/${total} done`}
+                      </span>
+                    </div>
+                    <div className="learn__track-progress-bar">
+                      <div
+                        className="learn__track-progress-fill"
+                        style={{ width: `${pct}%`, background: track.gradient }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Certificate preview */}
           <div style={{ marginTop: 16 }}>
@@ -502,8 +625,23 @@ export default function LearnPage() {
                   </span>
                 )}
               </div>
-              <h1 className="learn__lesson-h1">{activeLesson?.title}</h1>
-              <p className="learn__lesson-sub">Follow the lesson, try the code, then prove your knowledge with the quiz below.</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                <h1 className="learn__lesson-h1" style={{ margin: 0 }}>{activeLesson?.title}</h1>
+                <button
+                  className="btn btn-secondary btn-sm"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    borderColor: watchlist.includes(activeLesson?.id) ? 'rgba(0,243,255,0.4)' : undefined,
+                    color: watchlist.includes(activeLesson?.id) ? 'var(--clr-primary)' : undefined
+                  }}
+                  onClick={() => toggleWatchlist(activeLesson?.id)}
+                >
+                  {watchlist.includes(activeLesson?.id) ? '⭐ Bookmarked' : '🔖 Bookmark'}
+                </button>
+              </div>
+              <p className="learn__lesson-sub" style={{ marginTop: 8 }}>Follow the lesson, try the code, then prove your knowledge with the quiz below.</p>
             </div>
 
             {/* Lesson content */}

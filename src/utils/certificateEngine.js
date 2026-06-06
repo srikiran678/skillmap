@@ -70,6 +70,32 @@ export const CERTIFICATE_PROGRAMS = [
     issuer: 'SkillMap Academy',
     skills: ['Arrays', 'Big-O Analysis', 'Two Pointers', 'Sliding Window'],
   },
+  {
+    id: 'cert-cyber',
+    title: 'Cybersecurity Fundamentals Certificate',
+    icon: '🛡️',
+    color: '#ef4444',
+    gradient: 'linear-gradient(135deg, #ef4444, #b91c1c)',
+    trackId: 'cybersecurity-fundamentals',
+    requiredLessons: ['cyber-basics', 'web-sec'],
+    xpReward: 500,
+    description: 'Mastery of foundational security principles, authorization models, and web vulnerabilities.',
+    issuer: 'SkillMap Academy',
+    skills: ['CIA Triad', 'AuthN/AuthZ', 'SQLi Prevention', 'XSS Mitigation'],
+  },
+  {
+    id: 'cert-cloud',
+    title: 'Cloud Architecture Certificate',
+    icon: '☁️',
+    color: '#0ea5e9',
+    gradient: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
+    trackId: 'cloud-architecture',
+    requiredLessons: ['cloud-intro'],
+    xpReward: 400,
+    description: 'Understanding cloud computing service models (IaaS/PaaS/SaaS), elasticity, and autoscaling metrics.',
+    issuer: 'SkillMap Academy',
+    skills: ['IaaS', 'PaaS', 'SaaS', 'Autoscaling', 'Cost Architecture'],
+  },
 ];
 
 // Check which certificates the user has earned based on completedLessons

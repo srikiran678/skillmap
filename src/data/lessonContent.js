@@ -845,6 +845,223 @@ for (const n of sizes) {
       },
     ]
   },
+  {
+    id: 'cybersecurity-fundamentals',
+    title: 'Cybersecurity Fundamentals',
+    icon: '🛡️',
+    color: '#ef4444',
+    gradient: 'linear-gradient(135deg, #ef4444, #b91c1c)',
+    desc: 'Essential security principles, web vulnerabilities, and cryptography.',
+    lessons: [
+      {
+        id: 'cyber-basics',
+        title: 'Introduction to Cybersecurity',
+        duration: '12 min',
+        xp: 35,
+        content: `## Principles of Security
+
+
+Cybersecurity protects computer systems, networks, and data from digital attacks.
+The foundation of modern security is the **CIA Triad**:
+
+- **C**onfidentiality — Only authorized users access data.
+- **I**ntegrity — Data cannot be modified undetected.
+- **A**vailability — Systems remain accessible when needed.
+
+### Key Terminology
+- **Vulnerability** — A weakness in a system (bug, design flaw).
+- **Threat** — A potential negative event (malware, phishing).
+- **Exploit** — Code or method used to leverage a vulnerability.
+- **Risk** — Probability combined with impact of a successful exploit.
+
+### Authentication vs. Authorization
+- **Authentication** (AuthN) — Who are you? (Passwords, biometric keys, JWT tokens).
+- **Authorization** (AuthZ) — What are you allowed to do? (User role, access level permissions).
+
+> **Pro Tip:** Salting and hashing passwords (e.g. using bcrypt) is crucial. Plaintext password storage is a severe security violation.`,
+        code: `// Simple Hashing & Access Control Simulation
+const USERS_DB = {
+  "alice": { passwordHash: "d7a83d635c58d5", role: "admin" },
+  "bob": { passwordHash: "7cc474d5a3b74d", role: "member" }
+};
+
+function simpleHash(input) {
+  // basic custom hashing for demo purposes
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash * 31 + input.charCodeAt(i)) & 0xffffffff;
+  }
+  return hash.toString(16);
+}
+
+function verifyUserAccess(username, password, resource) {
+  console.log(\`🔒 Checking Access: \${username} requesting \${resource}...\`);
+  
+  const user = USERS_DB[username];
+  if (!user) {
+    console.error("❌ Authentication Failed: User not found");
+    return false;
+  }
+  
+  const inputHash = simpleHash(password);
+  if (inputHash !== user.passwordHash) {
+    console.error("❌ Authentication Failed: Password mismatch");
+    return false;
+  }
+  
+  console.log("✅ Authenticated Successfully!");
+  
+  // Authorization check
+  if (resource === "Admin Dashboard" && user.role !== "admin") {
+    console.error("❌ Authorization Failed: Admin role required");
+    return false;
+  }
+  
+  console.log(\`✅ Authorized: Access to "\${resource}" granted!\`);
+  return true;
+}
+
+// Test Run
+verifyUserAccess("alice", "adminPass", "Admin Dashboard");
+console.log("------------------------");
+verifyUserAccess("bob", "memberPass", "Admin Dashboard");`,
+        quiz: [
+          { q: 'What are the three pillars of the CIA Triad?', options: ['Control, Integrity, Access', 'Confidentiality, Integrity, Availability', 'Configuration, Identity, Authentication', 'Criticality, Impact, Assessment'], answer: 1 },
+          { q: 'What is the difference between Authentication and Authorization?', options: ['AuthN is permissions; AuthZ is identity', 'AuthN is identity; AuthZ is permissions', 'They mean the same thing', 'AuthN is hashing; AuthZ is salting'], answer: 1 },
+          { q: 'Salting a password prevents:', options: ['SQL Injection', 'Cross-Site Scripting', 'Precomputed dictionary attacks (rainbow tables)', 'Server crashes'], answer: 2 },
+          { q: 'A weakness in system design or code is called a:', options: ['Risk', 'Exploit', 'Vulnerability', 'Threat'], answer: 2 }
+        ]
+      },
+      {
+        id: 'web-sec',
+        title: 'Web Security & OWASP Top 10',
+        duration: '15 min',
+        xp: 45,
+        content: `## OWASP Top 10 Web Vulnerabilities
+
+The Open Web Application Security Project (OWASP) lists the most critical security risks to web applications.
+
+### 1. Injection (SQLi)
+Occurs when untrusted user input is passed directly to an interpreter (such as a database query engine) without validation or sanitization.
+*Example:* \`SELECT * FROM users WHERE user = 'admin' OR '1'='1'\`
+
+### 2. Broken Authentication
+Weaknesses in session tokens, login processes, or credential reset logic that let attackers impersonate legitimate users.
+
+### 3. Cross-Site Scripting (XSS)
+Occurs when an application includes untrusted data in a webpage without proper sanitization, allowing malicious scripts to execute in the victim's browser.
+- **Stored XSS** — Vulnerable input saved in database and served to other users.
+- **Reflected XSS** — Payload is immediate (e.g. query param).
+
+### 4. Cross-Site Request Forgery (CSRF)
+Forces an authenticated user to execute unwanted actions on a web application in which they're currently authenticated. Prevents using **CSRF Tokens** or **SameSite cookies**.`,
+        code: `// Web Input Sanitization and XSS Prevention Simulation
+function unsafeRender(userInput) {
+  // Directly inserting input into template (Vulnerable to XSS)
+  return \`<div>Welcome, \${userInput}!</div>\`;
+}
+
+function safeRender(userInput) {
+  // Escape HTML characters to prevent script tags executing
+  const escaped = userInput
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+  return \`<div>Welcome, \${escaped}!</div>\`;
+}
+
+const maliciousPayload = "<script>alert('Hacked!');</script>";
+
+console.log("--- Unsafe Render Output ---");
+console.log(unsafeRender(maliciousPayload)); // HTML interpreter executes script!
+
+console.log("\\n--- Safe Render Output ---");
+console.log(safeRender(maliciousPayload)); // Script tags display harmlessly as text`,
+        quiz: [
+          { q: 'Which vulnerability executes script payloads in a victim\'s browser?', options: ['SQL Injection', 'XSS', 'CSRF', 'DDOS'], answer: 1 },
+          { q: 'How do you prevent SQL Injection?', options: ['Using alert popups', 'Using Parameterized Queries / Prepared Statements', 'Encrypting the database', 'Adding more comments'], answer: 1 },
+          { q: 'CSRF attacks force users to perform actions on sites where they are:', options: ['Registered but logged out', 'Not registered', 'Already authenticated/logged in', 'Trying to sign up'], answer: 2 },
+          { q: 'What does OWASP stand for?', options: ['Open Web Architecture Security Program', 'Open Web Application Security Project', 'Official Website Access Security Protocol', 'Online Web Application Safety Panel'], answer: 1 }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cloud-architecture',
+    title: 'Cloud Architecture',
+    icon: '☁️',
+    color: '#0ea5e9',
+    gradient: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
+    desc: 'Cloud computing models, virtualization, scalable storage, and compute.',
+    lessons: [
+      {
+        id: 'cloud-intro',
+        title: 'Cloud Computing Foundations',
+        duration: '10 min',
+        xp: 30,
+        content: `## What is Cloud Computing?
+Cloud computing is the on-demand delivery of IT resources (compute power, databases, storage, and networking) over the internet with pay-as-you-go pricing.
+
+### Cloud Service Models
+1. **IaaS** (Infrastructure as a Service) — Virtual machines, virtual hard drives, and networks (e.g. AWS EC2, GCP Compute Engine).
+2. **PaaS** (Platform as a Service) — Managed OS and application runtime. Developers focus only on application code (e.g. Heroku, AWS Elastic Beanstalk).
+3. **SaaS** (Software as a Service) — Ready-to-use software applications over the web (e.g. Google Drive, Microsoft 365).
+
+### Core Features
+- **Elasticity** — Scale resources dynamically based on demand.
+- **High Availability** — Resources remain running with minimum downtime.
+- **Pay-as-you-go** — Cost matches exact usage (no upfront capital expenditure).`,
+        code: `// Cloud Autoscaling and Cost Estimation Simulation
+class CloudScaleGroup {
+  constructor(minInstances, maxInstances, targetCpuPercent) {
+    this.minInstances = minInstances;
+    this.maxInstances = maxInstances;
+    this.targetCpuPercent = targetCpuPercent;
+    this.currentInstances = minInstances;
+  }
+
+  evaluateInstances(averageCpuPercent) {
+    console.log(\`📈 Average CPU: \${averageCpuPercent}% | Instances online: \${this.currentInstances}\`);
+    if (averageCpuPercent > this.targetCpuPercent && this.currentInstances < this.maxInstances) {
+      this.currentInstances++;
+      console.log(\`🚀 High CPU detected! Scaled UP to \${this.currentInstances} instances.\`);
+    } else if (averageCpuPercent < 30 && this.currentInstances > this.minInstances) {
+      this.currentInstances--;
+      console.log(\`📉 Low CPU detected! Scaled DOWN to \${this.currentInstances} instances.\`);
+    } else {
+      console.log("✅ Load is stable. No scaling action required.");
+    }
+    return this.currentInstances;
+  }
+
+  calculateDailyCost(costPerInstanceHour) {
+    const hourlyCost = this.currentInstances * costPerInstanceHour;
+    return hourlyCost * 24;
+  }
+}
+
+const asg = new CloudScaleGroup(2, 5, 75);
+const COST_PER_INSTANCE_HR = 0.05; // 5 cents
+
+asg.evaluateInstances(45);
+console.log(\`Estimated Daily Cost: $\${asg.calculateDailyCost(COST_PER_INSTANCE_HR).toFixed(2)}\\n\`);
+
+asg.evaluateInstances(85);
+console.log(\`Estimated Daily Cost: $\${asg.calculateDailyCost(COST_PER_INSTANCE_HR).toFixed(2)}\\n\`);
+
+asg.evaluateInstances(20);
+console.log(\`Estimated Daily Cost: $\${asg.calculateDailyCost(COST_PER_INSTANCE_HR).toFixed(2)}\`);`,
+        quiz: [
+          { q: 'Which cloud service model provides virtual machines?', options: ['SaaS', 'PaaS', 'IaaS', 'FaaS'], answer: 2 },
+          { q: 'Which best describes Elasticity in cloud computing?', options: ['The physical flexibility of server racks', 'Scaling resources up or down dynamically based on load', 'Paying for one year in advance', 'Running multiple OS on one server'], answer: 1 },
+          { q: 'Heroku is an example of which service model?', options: ['IaaS', 'PaaS', 'SaaS', 'DBaaS'], answer: 1 },
+          { q: 'What pricing model does cloud computing typically use?', options: ['Annual subscription', 'Pay-as-you-go', 'Per-user flat rate', 'One-time license purchase'], answer: 1 }
+        ]
+      }
+    ]
+  }
 ];
 
 // ── Helper Functions ──────────────────────────────────────────
