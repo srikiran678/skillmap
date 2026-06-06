@@ -96,6 +96,32 @@ export const CERTIFICATE_PROGRAMS = [
     issuer: 'SkillMap Academy',
     skills: ['IaaS', 'PaaS', 'SaaS', 'Autoscaling', 'Cost Architecture'],
   },
+  {
+    id: 'cert-ai',
+    title: 'AI & Autonomous Agents Certificate',
+    icon: '🤖',
+    color: '#a855f7',
+    gradient: 'linear-gradient(135deg, #a855f7, #7e22ce)',
+    trackId: 'ai-agents',
+    requiredLessons: ['ai-intro', 'prompting'],
+    xpReward: 500,
+    description: 'Mastery of perceptrons, activation functions, CoT prompts, and ReAct loop architectures.',
+    issuer: 'SkillMap Academy',
+    skills: ['Neural Networks', 'Gradient Descent', 'CoT prompting', 'ReAct Loops'],
+  },
+  {
+    id: 'cert-quantum',
+    title: 'Quantum Computing Certificate',
+    icon: '⚛️',
+    color: '#14b8a6',
+    gradient: 'linear-gradient(135deg, #14b8a6, #0f766e)',
+    trackId: 'quantum-computing',
+    requiredLessons: ['quantum-basics'],
+    xpReward: 450,
+    description: 'Understanding qubit superposition, Dirac bra-ket probability amplitudes, and quantum gate measurement collapses.',
+    issuer: 'SkillMap Academy',
+    skills: ['Superposition', 'Qubits', 'Hadamard Gate', 'Quantum Mechanics'],
+  },
 ];
 
 // Check which certificates the user has earned based on completedLessons

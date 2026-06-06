@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { LESSON_TRACKS, getLesson } from '../data/lessonContent';
 import { computeEarnedCertificates } from '../utils/certificateEngine';
+import { getAIResponse } from '../utils/gamificationEngine';
 import confetti from 'canvas-confetti';
 import './LearnPage.css';
 
@@ -286,6 +287,12 @@ export default function LearnPage() {
       return [];
     }
   });
+
+  const [showAiMentor, setShowAiMentor] = useState(false);
+  const [aiInput, setAiInput] = useState('');
+  const [aiChat, setAiChat] = useState([
+    { role: 'assistant', content: "👋 Hello, Operative! I'm Sentinel, your AI Mentor. Ask me any clarifying question about this lesson or the code playground!" }
+  ]);
 
   const toggleWatchlist = (lessonId) => {
     const next = watchlist.includes(lessonId)
@@ -712,6 +719,129 @@ export default function LearnPage() {
           </main>
         </div>
       </div>
+      {/* Floating AI Mentor Chat Widget */}
+      {activeLessonId && (
+        <div style={{ position: 'fixed', bottom: 30, right: 30, zIndex: 1000 }}>
+          {/* Floating Action Button */}
+          <button
+            className="btn btn-primary"
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.8rem',
+              boxShadow: '0 8px 32px rgba(176,38,255,0.4)',
+              cursor: 'pointer',
+              background: 'linear-gradient(135deg, #b026ff, #00f3ff)',
+              border: 'none',
+              padding: 0
+            }}
+            onClick={() => setShowAiMentor(o => !o)}
+          >
+            {showAiMentor ? '❌' : '🤖'}
+          </button>
+
+          {/* Chat Panel */}
+          {showAiMentor && (
+            <div
+              className="glass"
+              style={{
+                position: 'absolute',
+                bottom: 70,
+                right: 0,
+                width: 320,
+                height: 400,
+                borderRadius: 'var(--radius-xl)',
+                border: '1px solid rgba(176,38,255,0.3)',
+                background: 'rgba(10, 10, 20, 0.95)',
+                backdropFilter: 'blur(16px)',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                animation: 'fadeInUp 0.3s ease'
+              }}
+            >
+              {/* Header */}
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--clr-border)', background: 'rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: '1.4rem' }}>🤖</span>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>Sentinel AI Mentor</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--clr-emerald)' }}>● Lesson Assistant</div>
+                </div>
+              </div>
+
+              {/* Chat Messages */}
+              <div style={{ flex: 1, padding: 16, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {aiChat.map((msg, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                      background: msg.role === 'user' ? 'rgba(0,243,255,0.15)' : 'rgba(255,255,255,0.04)',
+                      border: msg.role === 'user' ? '1px solid rgba(0,243,255,0.3)' : '1px solid var(--clr-border)',
+                      padding: '8px 12px',
+                      borderRadius: msg.role === 'user' ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
+                      maxWidth: '85%',
+                      fontSize: '0.82rem',
+                      lineHeight: 1.4,
+                      wordBreak: 'break-word',
+                      color: msg.role === 'user' ? '#fff' : 'var(--clr-text-muted)'
+                    }}
+                  >
+                    {msg.content}
+                  </div>
+                ))}
+              </div>
+
+              {/* Chat Input */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!aiInput.trim()) return;
+                  const userMsg = { role: 'user', content: aiInput };
+                  const nextChat = [...aiChat, userMsg];
+                  setAiChat(nextChat);
+                  setAiInput('');
+                  
+                  // Get response
+                  setTimeout(() => {
+                    const reply = getAIResponse(aiInput);
+                    setAiChat(prev => [...prev, { role: 'assistant', content: reply }]);
+                  }, 500);
+                }}
+                style={{ padding: 10, borderTop: '1px solid var(--clr-border)', display: 'flex', gap: 6 }}
+              >
+                <input
+                  type="text"
+                  placeholder="Ask a question..."
+                  value={aiInput}
+                  onChange={e => setAiInput(e.target.value)}
+                  style={{
+                    flex: 1,
+                    background: 'rgba(0,0,0,0.4)',
+                    border: '1px solid var(--clr-border)',
+                    borderRadius: 'var(--radius-md)',
+                    color: 'white',
+                    padding: '6px 12px',
+                    fontSize: '0.8rem',
+                    outline: 'none'
+                  }}
+                />
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm"
+                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                >
+                  Send
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

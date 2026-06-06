@@ -1053,11 +1053,234 @@ console.log(\`Estimated Daily Cost: $\${asg.calculateDailyCost(COST_PER_INSTANCE
 
 asg.evaluateInstances(20);
 console.log(\`Estimated Daily Cost: $\${asg.calculateDailyCost(COST_PER_INSTANCE_HR).toFixed(2)}\`);`,
+      }
+    ]
+  },
+  {
+    id: 'ai-agents',
+    title: 'AI & Autonomous Agents',
+    icon: '🤖',
+    color: '#a855f7',
+    gradient: 'linear-gradient(135deg, #a855f7, #7e22ce)',
+    desc: 'Introduction to neural networks, prompt design, and autonomous agents.',
+    lessons: [
+      {
+        id: 'ai-intro',
+        title: 'Introduction to Neural Nets',
+        duration: '12 min',
+        xp: 40,
+        content: `## How Neural Networks Learn
+
+Artificial Neural Networks are computing systems inspired by biological brains.
+The core building block is the **neuron (perceptron)**:
+
+- **Inputs** ($x_i$) — Data features fed into the system.
+- **Weights** ($w_i$) — Strengths of connections representing learning parameters.
+- **Bias** ($b$) — Offset adjusting activation threshold.
+- **Activation Function** — Controls non-linear output bounds (e.g. ReLU, Sigmoid).
+
+$$\\text{Output} = f\\left( \\sum (x_i \\cdot w_i) + b \\right)$$
+
+### Training & Backpropagation
+1. **Forward Pass** — Data goes forward; model makes prediction.
+2. **Loss Function** — Measures error (difference between prediction and truth).
+3. **Backward Pass (Backprop)** — Calculates gradients of error and adjusts weights using **Gradient Descent** optimization.`,
+        code: `// Simulation of a single Neuron (Perceptron) in JavaScript
+class ArtificialNeuron {
+  constructor(weights, bias) {
+    this.weights = weights; // array of numbers
+    this.bias = bias;       // number
+  }
+
+  // Activation function (Sigmoid)
+  sigmoid(z) {
+    return 1 / (1 + Math.exp(-z));
+  }
+
+  // Compute feedforward output
+  feedforward(inputs) {
+    let sum = 0;
+    for (let i = 0; i < inputs.length; i++) {
+      sum += inputs[i] * this.weights[i];
+    }
+    sum += this.bias;
+    const output = this.sigmoid(sum);
+    console.log(\`Inputs: [\${inputs.join(', ')}] | Weighted Sum: \${sum.toFixed(3)} | Output: \${output.toFixed(4)}\`);
+    return output;
+  }
+}
+
+// Instantiate with weights [0.8, -0.5] and bias -0.2
+const neuron = new ArtificialNeuron([0.8, -0.5], -0.2);
+
+console.log("--- Artificial Neuron Simulation ---");
+// Test cases
+neuron.feedforward([1.0, 0.0]); // should be active
+neuron.feedforward([0.0, 1.0]); // should be inactive
+neuron.feedforward([1.0, 1.0]); // balanced`,
         quiz: [
-          { q: 'Which cloud service model provides virtual machines?', options: ['SaaS', 'PaaS', 'IaaS', 'FaaS'], answer: 2 },
-          { q: 'Which best describes Elasticity in cloud computing?', options: ['The physical flexibility of server racks', 'Scaling resources up or down dynamically based on load', 'Paying for one year in advance', 'Running multiple OS on one server'], answer: 1 },
-          { q: 'Heroku is an example of which service model?', options: ['IaaS', 'PaaS', 'SaaS', 'DBaaS'], answer: 1 },
-          { q: 'What pricing model does cloud computing typically use?', options: ['Annual subscription', 'Pay-as-you-go', 'Per-user flat rate', 'One-time license purchase'], answer: 1 }
+          { q: 'What is the primary role of an Activation Function in a neural network?', options: ['Initialize weights randomly', 'Introduce non-linearity so the network can learn complex patterns', 'Calculate the loss/error', 'Save model training progress'], answer: 1 },
+          { q: 'In backpropagation, weight updates are computed using:', options: ['Random sorting', 'Gradients of the loss function', 'Multiplication of inputs', 'User-defined guesses'], answer: 1 },
+          { q: 'Which component represents the strength of a neuron connection?', options: ['Activation', 'Bias', 'Weight', 'Epoch'], answer: 2 },
+          { q: 'What is a Sigmoid output range?', options: ['[-1, 1]', '[0, 1]', '[-infinity, infinity]', '[0, 10]'], answer: 1 }
+        ]
+      },
+      {
+        id: 'prompting',
+        title: 'Prompt Design & Agents',
+        duration: '15 min',
+        xp: 45,
+        content: `## Prompt Engineering & Agent Architectures
+
+Prompt engineering optimizes natural language instructions to guide Large Language Models (LLMs) to perform specific tasks.
+
+### Advanced Prompting Techniques
+- **Zero-Shot** — Ask the model to perform a task without examples.
+- **Few-Shot** — Provide examples of input-output pairs.
+- **Chain of Thought (CoT)** — Force the model to generate its step-by-step reasoning process before outputting the final answer.
+
+### Autonomous AI Agents
+An Agent is a system that uses an LLM as its central engine to make decisions, execute tools, and follow loops:
+
+\`\`\`
+[User Input] → [Reason (LLM)] → [Select Tool] → [Action] → [Observation] → [Repeat/Final Answer]
+\`\`\`
+
+- **ReAct Loop** — "Reasoning" + "Acting" cycle. The agent decides what step to take, runs a tool, observes the output, and iterates.`,
+        code: `// Simple Agent Parser and ReAct Loop Simulation
+class MockLLM {
+  static reason(prompt) {
+    console.log(\`🤖 LLM processing prompt length: \${prompt.length}\`);
+    if (prompt.includes("weather in New York")) {
+      return {
+        thought: "I need to check the weather. I will use the weatherTool.",
+        tool: "weatherTool",
+        toolInput: "New York"
+      };
+    }
+    return {
+      thought: "I can answer this directly.",
+      answer: "Prompting is about structuring instructions to get better results."
+    };
+  }
+}
+
+function runAgent(query) {
+  console.log(\`👤 User Query: "\${query}"\`);
+  
+  // ReAct Step
+  const response = MockLLM.reason(query);
+  console.log(\`🧠 Agent Thought: "\${response.thought}"\`);
+  
+  if (response.tool) {
+    console.log(\`⚙️ Action: Execute tool "\${response.tool}" with input "\${response.toolInput}"\`);
+    // Mock tool execution
+    const observation = "72°F and Sunny";
+    console.log(\`👁️ Observation: Tool returned "\${observation}"\`);
+    
+    // Final Answer
+    const finalAnswer = \`The weather in \${response.toolInput} is currently \${observation}.\`;
+    console.log(\`🎉 Final Answer: \${finalAnswer}\`);
+  } else {
+    console.log(\`🎉 Direct Answer: \${response.answer}\`);
+  }
+}
+
+runAgent("What is the weather in New York?");`,
+        quiz: [
+          { q: 'Which prompting technique provides inputs/outputs pairs to guide the model?', options: ['Zero-Shot prompting', 'Few-Shot prompting', 'Negative prompting', 'Recursive prompting'], answer: 1 },
+          { q: 'What describes the ReAct loop in AI Agents?', options: ['Reacting to compiler syntax errors', 'Alternating reasoning thoughts and execution actions to solve tasks', 'React.js web development rendering loops', 'Active database replica updates'], answer: 1 },
+          { q: 'Which prompting method forces step-by-step reasoning?', options: ['Few-Shot', 'Chain of Thought (CoT)', 'System Prompting', 'Autocomplete'], answer: 1 },
+          { q: 'What acts as the "brain/core engine" of an autonomous AI Agent?', options: ['The database', 'The LLM', 'The web server API', 'The message queue'], answer: 1 }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'quantum-computing',
+    title: 'Quantum Computing',
+    icon: '⚛️',
+    color: '#14b8a6',
+    gradient: 'linear-gradient(135deg, #14b8a6, #0f766e)',
+    desc: 'Quantum mechanics basics, qubits, gates, and circuit algorithms.',
+    lessons: [
+      {
+        id: 'quantum-basics',
+        title: 'Qubits & Superposition',
+        duration: '15 min',
+        xp: 50,
+        content: `## Core Concepts of Quantum Computing
+
+Quantum computing leverages quantum mechanics to solve computational problems that are practically impossible for classical systems.
+
+### 1. Classical Bits vs. Qubits
+- **Classical Bit** — Can exist only in one of two states: 0 or 1.
+- **Qubit** — Can exist in state $|0\\rangle$, state $|1\\rangle$, or a linear combination of both simultaneously:
+
+$$|\\psi\\rangle = \\alpha |0\\rangle + \\beta |1\\rangle$$
+
+where $\\alpha$ and $\\beta$ are complex numbers representing probability amplitudes, and $|\\alpha|^2 + |\\beta|^2 = 1$.
+
+### 2. Superposition
+The capability of a qubit to exist in multiple states at once. When measured, it collapses into either $|0\\rangle$ or $|1\\rangle$ with specific probabilities.
+
+### 3. Entanglement
+A quantum link where the state of one qubit instantaneously determines the state of another, no matter how far apart they are.
+
+### 4. Quantum Gates
+Operators that rotate a qubit's state on the Bloch Sphere:
+- **Hadamard Gate (H)** — Creates superposition.
+- **Pauli-X Gate (NOT)** — Flips qubit state.
+- **CNOT Gate** — Entangles two qubits (controlled-NOT).`,
+        code: `// Quantum Gate and Measurement Simulator
+class QubitSimulator {
+  constructor() {
+    // Start in state |0> (100% probability of 0)
+    this.alpha = 1.0; 
+    this.beta = 0.0;
+  }
+
+  // Apply Hadamard (H) Gate to put Qubit in Superposition
+  applyHadamard() {
+    console.log("⚡ Applying Hadamard (H) Gate...");
+    const nextAlpha = (this.alpha + this.beta) / Math.sqrt(2);
+    const nextBeta = (this.alpha - this.beta) / Math.sqrt(2);
+    this.alpha = nextAlpha;
+    this.beta = nextBeta;
+  }
+
+  // Measure the Qubit (collapses state)
+  measure() {
+    const prob0 = Math.pow(Math.abs(this.alpha), 2);
+    const prob1 = Math.pow(Math.abs(this.beta), 2);
+    console.log(\`Probabilities: |0> = \${(prob0*100).toFixed(1)}% | |1> = \${(prob1*100).toFixed(1)}%\`);
+    
+    const outcome = Math.random() < prob0 ? 0 : 1;
+    console.log(\`🎯 Measurement Collapse: Qubit collapsed into |\${outcome}>\`);
+    return outcome;
+  }
+}
+
+const qubit = new QubitSimulator();
+console.log("--- Initial Qubit State ---");
+qubit.measure();
+
+console.log("\\n--- Putting Qubit in Superposition ---");
+qubit.applyHadamard();
+
+// Repeat measurements to demonstrate probability collapse outcomes
+const outcomes = [];
+for (let i = 0; i < 5; i++) {
+  const q = new QubitSimulator();
+  q.applyHadamard();
+  outcomes.push(q.measure());
+}
+console.log("\\nMeasurement results over 5 identical superposition runs:", outcomes);`,
+        quiz: [
+          { q: 'What represents the state of a qubit in superposition?', options: ['0 or 1 exclusively', 'A linear combination of both |0> and |1> states', 'A high electric voltage', 'A floating-point string representation'], answer: 1 },
+          { q: 'Which quantum gate is primarily used to put a qubit into superposition?', options: ['Pauli-X Gate', 'Hadamard Gate', 'CNOT Gate', 'Toffoli Gate'], answer: 1 },
+          { q: 'What happens when you measure a qubit in superposition?', options: ['It doubles its energy', 'It collapses into |0> or |1> state', 'It remains in superposition forever', 'It turns into a classical bit permanently'], answer: 1 },
+          { q: 'Quantum Entanglement link implies that measuring one qubit will:', options: ['Crash the quantum computer', 'Destroy both qubits', 'Instantaneously determine the state of the entangled partner qubit', 'Slow down the computation speed'], answer: 2 }
         ]
       }
     ]
