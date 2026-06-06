@@ -190,7 +190,7 @@ export default function ChallengesPage() {
   const [resultsModal, setResultsModal] = useState(null); // { success: bool, xp: int, coins: int, timeSpent: string, scoreboard: array }
 
   const timerRef = useRef(null);
-  const totalSecondsRef = useRef(0);
+  const [totalSeconds, setTotalSeconds] = useState(0);
 
   // Filter challenges
   const filteredChallenges = CHALLENGES_LIST.filter(c => {
@@ -212,7 +212,7 @@ export default function ChallengesPage() {
   const startChallenge = (challenge) => {
     setRunningChallenge(challenge);
     setTimeLeft(challenge.duration * 60);
-    totalSecondsRef.current = challenge.duration * 60;
+    setTotalSeconds(challenge.duration * 60);
     setSelectedOption(null);
     setConsoleOut('');
     if (challenge.type === 'code') {
@@ -228,26 +228,6 @@ export default function ChallengesPage() {
     }
   };
 
-  // Timer Effect
-  useEffect(() => {
-    if (runningChallenge && timeLeft > 0) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current);
-            // Auto-submit on timeout
-            handleTimeOut();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [runningChallenge, timeLeft]);
-
   // Format timer string
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -255,17 +235,8 @@ export default function ChallengesPage() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Check if warning or danger status for timer
-  const getTimerClass = () => {
-    if (!runningChallenge) return '';
-    const pct = timeLeft / totalSecondsRef.current;
-    if (pct < 0.1) return 'challenge-runner__timer--danger';
-    if (pct < 0.25) return 'challenge-runner__timer--warning';
-    return '';
-  };
-
   // Run user code locally (JS sandbox)
-  const runCode = () => {
+  function runCode() {
     if (!runningChallenge) return;
     try {
       const logs = [];
@@ -284,24 +255,13 @@ export default function ChallengesPage() {
       setConsoleOut(`FAIL: ${e.message}`);
       return { success: false };
     }
-  };
-
-  // Handle Timeout
-  const handleTimeOut = () => {
-    alert("⌛ Time is up! Grading your challenge based on current inputs.");
-    if (runningChallenge.type === 'code') {
-      const res = runCode();
-      submitResult(res && res.success);
-    } else {
-      submitResult(false);
-    }
-  };
+  }
 
   // Submit Result
-  const submitResult = (isCorrect) => {
+  function submitResult(isCorrect) {
     if (timerRef.current) clearInterval(timerRef.current);
     
-    const timeSpentSeconds = totalSecondsRef.current - timeLeft;
+    const timeSpentSeconds = totalSeconds - timeLeft;
     const timeSpentStr = formatTime(timeSpentSeconds);
     const challenge = runningChallenge;
     setRunningChallenge(null);
@@ -365,12 +325,52 @@ export default function ChallengesPage() {
       timeSpent: timeSpentStr,
       scoreboard: scoreboard
     });
-  };
+  }
 
-  const handleMCQSubmit = () => {
+  // Handle Timeout
+  function handleTimeOut() {
+    alert("⌛ Time is up! Grading your challenge based on current inputs.");
+    if (runningChallenge.type === 'code') {
+      const res = runCode();
+      submitResult(res && res.success);
+    } else {
+      submitResult(false);
+    }
+  }
+
+  function handleMCQSubmit() {
     if (!runningChallenge) return;
     const isCorrect = selectedOption === runningChallenge.answer;
     submitResult(isCorrect);
+  }
+
+  // Timer Effect
+  useEffect(() => {
+    if (runningChallenge && timeLeft > 0) {
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            // Auto-submit on timeout
+            handleTimeOut();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [runningChallenge, timeLeft]);
+
+  // Check if warning or danger status for timer
+  const getTimerClass = () => {
+    if (!runningChallenge) return '';
+    const pct = totalSeconds > 0 ? timeLeft / totalSeconds : 1;
+    if (pct < 0.1) return 'challenge-runner__timer--danger';
+    if (pct < 0.25) return 'challenge-runner__timer--warning';
+    return '';
   };
 
   const handleKeyDown = (e) => {

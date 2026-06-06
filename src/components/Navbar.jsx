@@ -27,7 +27,9 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  useEffect(() => setMenuOpen(false), [location]);
+  useEffect(() => {
+    setTimeout(() => setMenuOpen(false), 0);
+  }, [location]);
 
   return (
     <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>

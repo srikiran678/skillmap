@@ -9,7 +9,10 @@ export default function StatCard({ icon, label, value, suffix = '', color = 'pri
     if (animatedRef.current) return;
     animatedRef.current = true;
     const numericValue = parseInt(value) || 0;
-    if (numericValue === 0) { setDisplayVal(value); return; }
+    if (numericValue === 0) {
+      setTimeout(() => setDisplayVal(value), 0);
+      return;
+    }
 
     const duration = 1000;
     const startTime = performance.now() + delay;

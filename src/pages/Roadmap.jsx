@@ -17,6 +17,8 @@ export default function Roadmap() {
   const [filterPriority, setFilterPriority] = useState('All');
   const [expandedSkill, setExpandedSkill] = useState(null);
 
+  const roadmap = useMemo(() => generateRoadmap(selectedJobs || [], profile?.skills || []), [selectedJobs, profile?.skills]);
+
   if (!hasProfile) {
     return (
       <div className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
@@ -29,8 +31,6 @@ export default function Roadmap() {
       </div>
     );
   }
-
-  const roadmap = useMemo(() => generateRoadmap(selectedJobs, profile.skills || []), [selectedJobs, profile.skills]);
 
   // Merge roadmap with progress state
   const enriched = roadmap.map(item => ({

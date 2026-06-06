@@ -97,9 +97,12 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     if (profile.careerInterests?.length || profile.skills?.length || profile.name) {
       saveUserProfile(profile);
-      setHasProfile(!!(profile.careerInterests?.length || profile.name));
+      const nextHasProfile = !!(profile.careerInterests?.length || profile.name);
+      if (hasProfile !== nextHasProfile) {
+        setTimeout(() => setHasProfile(nextHasProfile), 0);
+      }
     }
-  }, [profile]);
+  }, [profile, hasProfile]);
 
   // Persist skill progress
   useEffect(() => {
@@ -471,6 +474,7 @@ export const UserProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useUser = () => {
   const ctx = useContext(UserContext);
   if (!ctx) throw new Error('useUser must be used within a UserProvider');

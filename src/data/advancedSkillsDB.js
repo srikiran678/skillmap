@@ -1,4 +1,9 @@
-// ============================================================\n// ADVANCED SKILLS DATABASE — 50 skills per domain\n// Generated dynamically with up-to-date YouTube learning links\n// ============================================================\n\nexport const ADVANCED_DOMAIN_SKILLS = [
+// ============================================================
+// ADVANCED SKILLS DATABASE — 50 skills per domain
+// Generated dynamically with up-to-date YouTube learning links
+// ============================================================
+
+export const ADVANCED_DOMAIN_SKILLS = [
   {
     "domain": "Web Development",
     "skills": [
@@ -2294,4 +2299,4 @@
       }
     ]
   }
-];\n
+];

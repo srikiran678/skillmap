@@ -21,7 +21,7 @@ function renderMarkdown(md) {
       return '<tr>' + cells.map(c => `<td>${c.trim()}</td>`).join('') + '</tr>';
     })
     .replace(/(<tr>.*<\/tr>\n?)+/gs, m => `<table>${m.replace(/<td>/g, match => match).replace(/(<tr>[\s\S]*?<\/tr>)/g, (_, r) => r)}</table>`)
-    .replace(/^\> (.+)$/gm, '<blockquote>$1</blockquote>')
+    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
     .replace(/^- (.+)$/gm, '<li>$1</li>')
     .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
     .replace(/\n\n/g, '</p><p>')

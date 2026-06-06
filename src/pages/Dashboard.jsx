@@ -44,7 +44,7 @@ export default function Dashboard() {
     if (timerActive && timeLeft > 0) {
       interval = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     } else if (timerActive && timeLeft === 0) {
-      setTimerActive(false);
+      setTimeout(() => setTimerActive(false), 0);
       addXP(50);
       awardBadge('Focus Master ⏱️');
       trackFocusSession();
@@ -59,6 +59,22 @@ export default function Dashboard() {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
+  // Computed data
+  const jobGaps = useMemo(() => computeAllGaps(selectedJobs || [], profile?.skills || []), [selectedJobs, profile?.skills]);
+  const stats = useMemo(() => computeProfileStats(selectedJobs || [], profile?.skills || []), [selectedJobs, profile?.skills]);
+  const roadmap = useMemo(() => generateRoadmap(selectedJobs || [], profile?.skills || []), [selectedJobs, profile?.skills]);
+
+  const sortedToLearn = useMemo(() => {
+    const all = roadmap.slice();
+    if (sortBy === 'priority') {
+      const order = { High: 0, Medium: 1, Low: 2 };
+      return all.sort((a, b) => order[a.priority] - order[b.priority]);
+    }
+    if (sortBy === 'level') return all.sort((a, b) => a.levelNeeded.localeCompare(b.levelNeeded));
+    if (sortBy === 'jobs') return all.sort((a, b) => b.jobs.length - a.jobs.length);
+    return all;
+  }, [roadmap, sortBy]);
+
   // Guard
   if (!hasProfile) {
     return (
@@ -72,22 +88,6 @@ export default function Dashboard() {
       </div>
     );
   }
-
-  // Computed data
-  const jobGaps = useMemo(() => computeAllGaps(selectedJobs, profile.skills || []), [selectedJobs, profile.skills]);
-  const stats = useMemo(() => computeProfileStats(selectedJobs, profile.skills || []), [selectedJobs, profile.skills]);
-  const roadmap = useMemo(() => generateRoadmap(selectedJobs, profile.skills || []), [selectedJobs, profile.skills]);
-
-  const sortedToLearn = useMemo(() => {
-    const all = roadmap.slice();
-    if (sortBy === 'priority') {
-      const order = { High: 0, Medium: 1, Low: 2 };
-      return all.sort((a, b) => order[a.priority] - order[b.priority]);
-    }
-    if (sortBy === 'level') return all.sort((a, b) => a.levelNeeded.localeCompare(b.levelNeeded));
-    if (sortBy === 'jobs') return all.sort((a, b) => b.jobs.length - a.jobs.length);
-    return all;
-  }, [roadmap, sortBy]);
 
   const matchColor = stats.overallMatch >= 70 ? 'emerald' : stats.overallMatch >= 40 ? 'amber' : 'primary';
 

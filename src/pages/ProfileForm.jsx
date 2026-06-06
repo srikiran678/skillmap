@@ -54,20 +54,23 @@ export default function ProfileForm() {
 
   useEffect(() => {
     // If the profile is reset externally, sync the local state back to empty/default.
-    if (!profile.name && profile.careerInterests?.length === 0) {
-      setStep(1);
-      setName('');
-      setEmail('');
-      setDegree('');
-      setField('');
-      setYear('');
-      setInstitution('');
-      setSelectedDomain(null);
-      setCareerInterests([]);
-      setSkills([]);
-      setErrors({});
+    if (!profile.name && (!profile.careerInterests || profile.careerInterests.length === 0)) {
+      const timer = setTimeout(() => {
+        if (step !== 1) setStep(1);
+        if (name !== '') setName('');
+        if (email !== '') setEmail('');
+        if (degree !== '') setDegree('');
+        if (field !== '') setField('');
+        if (year !== '') setYear('');
+        if (institution !== '') setInstitution('');
+        if (selectedDomain !== null) setSelectedDomain(null);
+        if (careerInterests.length > 0) setCareerInterests([]);
+        if (skills.length > 0) setSkills([]);
+        if (Object.keys(errors).length > 0) setErrors({});
+      }, 0);
+      return () => clearTimeout(timer);
     }
-  }, [profile]);
+  }, [profile, step, name, email, degree, field, year, institution, selectedDomain, careerInterests, skills, errors]);
 
   const jobsForDomain = selectedDomain ? JOB_SKILLS_DB.filter(j => j.domain === selectedDomain) : [];
 
