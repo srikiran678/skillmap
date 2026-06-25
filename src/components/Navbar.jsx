@@ -12,7 +12,6 @@ const NAV_LINKS = [
   { to: '/learn', label: 'Learn', icon: '📚' },
   { to: '/challenges', label: 'Arena', icon: '⚔️' },
   { to: '/certificates', label: 'Vault', icon: '🏆' },
-  { to: '/hub', label: 'Game Hub', icon: '🎮' },
 ];
 
 export default function Navbar() {

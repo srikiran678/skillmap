@@ -51,7 +51,7 @@ function TryItEditor({ code, lang }) {
       try {
         const logs = [];
         const fakeConsole = { log: (...args) => logs.push(args.map(String).join(' ')), error: (...args) => logs.push('ERROR: ' + args.join(' ')) };
-        // eslint-disable-next-line no-new-func
+         
         const fn = new Function('console', editorCode);
         fn(fakeConsole);
         setConsoleOut(logs.join('\n') || '// No output');

@@ -1,13 +1,29 @@
-import React, { useMemo, useRef, useCallback, useEffect } from 'react';
+import React, { useMemo, useRef, useCallback, useEffect, useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import ForceGraph3D from 'react-force-graph-3d';
+import { getVideoForTopic } from '../utils/videoEngine';
 import './MindMap.css';
 
 export default function MindMap() {
   const { profile, selectedJobs, hasProfile } = useUser();
   const navigate = useNavigate();
   const fgRef = useRef();
+  const [activeVideo, setActiveVideo] = useState(null);
+
+  const handleNodeClick = useCallback((node) => {
+    if (node.group === 2) { // Skill node
+      setActiveVideo({
+        title: `Mastering ${node.name}`,
+        url: getVideoForTopic(node.name)
+      });
+    } else if (node.group === 1) { // Job node
+      setActiveVideo({
+        title: `Career: ${node.name}`,
+        url: getVideoForTopic(node.name)
+      });
+    }
+  }, []);
 
   const graphData = useMemo(() => {
     if (!hasProfile || selectedJobs.length === 0) return { nodes: [], links: [] };
@@ -112,11 +128,37 @@ export default function MindMap() {
             nodeLabel="name"
             nodeColor="color"
             nodeRelSize={6}
+            nodeResolution={32}
             linkColor="color"
             linkWidth="width"
+            linkResolution={16}
             backgroundColor="#050508"
             showNavInfo={false}
+            onNodeClick={handleNodeClick}
           />
+          {activeVideo && (
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(5, 5, 8, 0.85)', backdropFilter: 'blur(10px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div className="glass" style={{ width: '90%', maxWidth: 800, padding: '30px', position: 'relative', borderRadius: 'var(--radius-xl)' }}>
+                <button 
+                  onClick={() => setActiveVideo(null)} 
+                  style={{ position: 'absolute', top: 15, right: 20, background: 'transparent', border: 'none', color: 'var(--clr-text)', fontSize: '2rem', cursor: 'pointer' }}
+                >
+                  &times;
+                </button>
+                <h3 style={{ marginBottom: 20, fontFamily: 'var(--font-display)', color: 'var(--clr-primary)' }}>
+                  🎥 {activeVideo.title}
+                </h3>
+                <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+                  <iframe 
+                    src={activeVideo.url} 
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen 
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

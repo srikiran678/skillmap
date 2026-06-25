@@ -162,7 +162,7 @@ export default function Home() {
                   id: 'vid-google-essential',
                   title: 'Google AI Essentials — Complete Overview',
                   channel: 'Google Career Certificates',
-                  url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder embed link
+                  url: 'https://www.youtube.com/embed/01sTQyDhaD8', // Google AI Essentials
                   desc: 'A complete run-through of how to implement prompt engineering, boost workplace productivity, and use generative AI responsibly.',
                   views: '1.2M views',
                   time: '2 weeks ago'
@@ -171,7 +171,7 @@ export default function Home() {
                   id: 'vid-andrew-ng',
                   title: 'AI for Everyone: Core Concepts',
                   channel: 'DeepLearning.AI',
-                  url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                  url: 'https://www.youtube.com/embed/5NgNicANyqM',
                   desc: 'Andrew Ng breaks down how deep learning algorithms function, where machine learning can be applied, and its true limits.',
                   views: '940K views',
                   time: '1 month ago'
@@ -180,7 +180,7 @@ export default function Home() {
                   id: 'vid-generative-ai',
                   title: 'Generative AI Roadmap in 2026',
                   channel: 'Neural Academy',
-                  url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                  url: 'https://www.youtube.com/embed/zjkBMFhNj_g',
                   desc: 'The complete mathematical and developmental guide to mastery of Large Language Models (LLMs), Transformer networks, and diffusion tools.',
                   views: '320K views',
                   time: '3 days ago'

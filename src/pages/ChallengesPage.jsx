@@ -246,7 +246,7 @@ export default function ChallengesPage() {
       };
       // Compile starter + user adjustments + test runner checkCode
       const codeToRun = `${editorCode}\n\n${runningChallenge.checkCode}`;
-      // eslint-disable-next-line no-new-func
+       
       const fn = new Function('console', codeToRun);
       fn(fakeConsole);
       setConsoleOut(logs.join('\n') || '// Execution succeeded (no print)');
