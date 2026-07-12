@@ -14,7 +14,7 @@ const VIEW = {
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { signIn, signUp, verifyEmail, resendVerification, sendResetEmail, resetPassword, authError } = useAuth();
+  const { signIn, signUp, verifyEmail, resendVerification, sendResetEmail, resetPassword, authError, insforge } = useAuth();
 
   const [view, setView] = useState(VIEW.SIGN_IN);
   const [name, setName] = useState('');
@@ -33,6 +33,20 @@ export default function LoginPage() {
   const clearState = () => {
     setLocalError('');
     setSuccessMsg('');
+  };
+
+  // ── OAuth Sign In ───────────────────────────────────────────
+  const handleOAuthSignIn = async (provider) => {
+    clearState();
+    setLoading(true);
+    const redirectTo = `${window.location.origin}/dashboard`;
+    const { data, error } = await insforge.auth.signInWithOAuth(provider, { redirectTo });
+    setLoading(false);
+    if (error) {
+      setLocalError(error.message);
+    } else if (data?.url) {
+      window.location.href = data.url;
+    }
   };
 
   // ── Sign In ──────────────────────────────────────────────────
@@ -168,6 +182,18 @@ export default function LoginPage() {
                 {loading ? <span className="login-spinner" /> : 'Sign In'}
               </button>
             </form>
+            <div className="login-divider">or continue with</div>
+            <div className="login-oauth-group">
+              <button type="button" className="login-oauth-btn" onClick={() => handleOAuthSignIn('google')} disabled={loading}>
+                <span className="login-oauth-icon">🌐</span> Google
+              </button>
+              <button type="button" className="login-oauth-btn" onClick={() => handleOAuthSignIn('github')} disabled={loading}>
+                <span className="login-oauth-icon">🐙</span> GitHub
+              </button>
+              <button type="button" className="login-oauth-btn" onClick={() => handleOAuthSignIn('facebook')} disabled={loading}>
+                <span className="login-oauth-icon">📘</span> Facebook
+              </button>
+            </div>
             <p className="login-toggle">
               Don&apos;t have an account?{' '}
               <button className="login-link" onClick={() => { clearState(); setView(VIEW.SIGN_UP); }}>
@@ -217,6 +243,18 @@ export default function LoginPage() {
                 {loading ? <span className="login-spinner" /> : 'Create Account'}
               </button>
             </form>
+            <div className="login-divider">or continue with</div>
+            <div className="login-oauth-group">
+              <button type="button" className="login-oauth-btn" onClick={() => handleOAuthSignIn('google')} disabled={loading}>
+                <span className="login-oauth-icon">🌐</span> Google
+              </button>
+              <button type="button" className="login-oauth-btn" onClick={() => handleOAuthSignIn('github')} disabled={loading}>
+                <span className="login-oauth-icon">🐙</span> GitHub
+              </button>
+              <button type="button" className="login-oauth-btn" onClick={() => handleOAuthSignIn('facebook')} disabled={loading}>
+                <span className="login-oauth-icon">📘</span> Facebook
+              </button>
+            </div>
             <p className="login-toggle">
               Already have an account?{' '}
               <button className="login-link" onClick={() => { clearState(); setView(VIEW.SIGN_IN); }}>
