@@ -8,13 +8,27 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  // On mount — restore session from httpOnly cookie if present
+  // On mount — restore session from httpOnly cookie or URL query parameter
   useEffect(() => {
     const restoreSession = async () => {
       try {
+        // Parse token from URL if redirected from auth website
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get('insforge_access_token');
+        if (urlToken) {
+          console.log('Detected access token in callback URL, setting session...');
+          insforge.setAccessToken(urlToken);
+          // Clean the access token parameter from the browser address bar
+          urlParams.delete('insforge_access_token');
+          const newSearch = urlParams.toString();
+          const cleanUrl = window.location.pathname + (newSearch ? `?${newSearch}` : '') + window.location.hash;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+
         const { data } = await insforge.auth.getCurrentUser();
         setUser(data?.user ?? null);
-      } catch {
+      } catch (err) {
+        console.error('Failed to restore session:', err);
         setUser(null);
       } finally {
         setLoading(false);
