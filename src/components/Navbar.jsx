@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 const NAV_LINKS = [
@@ -18,7 +19,14 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { hasProfile, profile } = useUser();
+  const { user, signOut } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/login');
+  };
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 16);
@@ -70,6 +78,25 @@ export default function Navbar() {
             <NavLink to="/profile" className="btn btn-primary btn-sm">
               Get Started
             </NavLink>
+          )}
+          {user && (
+            <button
+              onClick={handleSignOut}
+              className="btn btn-sm"
+              style={{
+                background: 'rgba(239,68,68,0.12)',
+                border: '1px solid rgba(239,68,68,0.3)',
+                color: '#fca5a5',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontSize: '0.78rem',
+                padding: '0.35rem 0.75rem',
+                fontWeight: 500,
+              }}
+              title={`Signed in as ${user.email}`}
+            >
+              Sign Out
+            </button>
           )}
           <button
             className={`navbar__burger ${menuOpen ? 'navbar__burger--open' : ''}`}

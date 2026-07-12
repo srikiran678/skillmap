@@ -14,6 +14,8 @@ import {
   checkNewAchievements,
   ACHIEVEMENT_DEFINITIONS,
 } from '../utils/gamificationEngine';
+import { useAuth } from './AuthContext';
+import insforge from '../lib/insforge';
 
 const UserContext = createContext(null);
 
@@ -69,12 +71,147 @@ const getWeekStart = () => {
 };
 
 export const UserProvider = ({ children }) => {
+  const { user } = useAuth();
   const [profile, setProfile] = useState(() => loadUserProfile() || DEFAULT_PROFILE);
   const [skillProgress, setSkillProgress] = useState(() => loadSkillProgress());
   const [hasProfile, setHasProfile] = useState(() => !!loadUserProfile()?.careerInterests?.length);
   const [gamification, setGamification] = useState(() => loadGamification() || DEFAULT_GAMIFICATION);
   const [dailyQuests, setDailyQuests] = useState(() => getOrRefreshQuests());
   const [chatHistory, setChatHistory] = useState(() => loadChatHistory());
+
+  // ── Load cloud data on sign-in ───────────────────────────────
+  useEffect(() => {
+    if (!user) return;
+    const loadFromCloud = async () => {
+      try {
+        // Load profile
+        const { data: rows } = await insforge.database
+          .from('skillmap_profiles')
+          .select()
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (rows) {
+          const cloudProfile = {
+            name: rows.name || '',
+            email: rows.email || user.email || '',
+            academicQualifications: rows.academic_qualifications || DEFAULT_PROFILE.academicQualifications,
+            careerInterests: rows.career_interests || [],
+            skills: rows.skills || [],
+            xp: rows.xp || 0,
+            badges: rows.badges || [],
+            coins: rows.coins ?? 50,
+            streak_current: rows.streak_current || 0,
+            streak_last_date: rows.streak_last_date || null,
+            streak_freezes: rows.streak_freezes || 0,
+            weekly_xp: rows.weekly_xp || 0,
+            week_start: rows.week_start || getTodayDateString(),
+            questsCompleted: rows.quests_completed || 0,
+            purchases: rows.purchases || 0,
+            coinsSpent: rows.coins_spent || 0,
+            focusSessions: rows.focus_sessions || 0,
+            aiMessages: rows.ai_messages || 0,
+            freezesUsed: rows.freezes_used || 0,
+            inventory: rows.inventory || [],
+            earnedAchievementIds: rows.earned_achievement_ids || [],
+          };
+          setProfile(cloudProfile);
+          saveUserProfile(cloudProfile);
+          setHasProfile(!!(cloudProfile.careerInterests?.length || cloudProfile.name));
+        } else if (loadUserProfile()) {
+          // Migrate existing localStorage data to cloud
+          const local = loadUserProfile();
+          if (local) upsertProfileToCloud(user.id, local);
+        }
+
+        // Load skill progress
+        const { data: spRows } = await insforge.database
+          .from('skillmap_skill_progress')
+          .select()
+          .eq('user_id', user.id);
+        if (spRows?.length) {
+          const sp = {};
+          spRows.forEach(r => { sp[r.skill_name] = { status: r.status }; });
+          setSkillProgress(sp);
+          saveSkillProgress(sp);
+        }
+
+        // Load gamification prefs
+        const { data: gRow } = await insforge.database
+          .from('skillmap_gamification')
+          .select()
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (gRow) {
+          const g = { activeTheme: gRow.active_theme || 'default', activeAvatar: gRow.active_avatar || '🧑\u200d💻' };
+          setGamification(g);
+          saveGamification(g);
+        }
+
+        // Load daily quests
+        const today = getTodayDateString();
+        const { data: qRow } = await insforge.database
+          .from('skillmap_daily_quests')
+          .select()
+          .eq('user_id', user.id)
+          .eq('date', today)
+          .maybeSingle();
+        if (qRow?.quests) {
+          setDailyQuests(qRow.quests);
+          saveDailyQuests(qRow.quests, today);
+        }
+      } catch (err) {
+        console.warn('[SkillMap] Cloud load failed, using local cache:', err);
+      }
+    };
+    loadFromCloud();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
+  // ── Cloud upsert helpers ─────────────────────────────────────
+  const upsertProfileToCloud = useCallback(async (userId, profileData) => {
+    if (!userId) return;
+    await insforge.database
+      .from('skillmap_profiles')
+      .upsert([{
+        user_id: userId,
+        name: profileData.name || '',
+        email: profileData.email || '',
+        academic_qualifications: profileData.academicQualifications || [],
+        career_interests: profileData.careerInterests || [],
+        skills: profileData.skills || [],
+        xp: profileData.xp || 0,
+        badges: profileData.badges || [],
+        coins: profileData.coins ?? 50,
+        streak_current: profileData.streak_current || 0,
+        streak_last_date: profileData.streak_last_date || null,
+        streak_freezes: profileData.streak_freezes || 0,
+        weekly_xp: profileData.weekly_xp || 0,
+        week_start: profileData.week_start || getTodayDateString(),
+        quests_completed: profileData.questsCompleted || 0,
+        purchases: profileData.purchases || 0,
+        coins_spent: profileData.coinsSpent || 0,
+        focus_sessions: profileData.focusSessions || 0,
+        ai_messages: profileData.aiMessages || 0,
+        freezes_used: profileData.freezesUsed || 0,
+        inventory: profileData.inventory || [],
+        earned_achievement_ids: profileData.earnedAchievementIds || [],
+        updated_at: new Date().toISOString(),
+      }]);
+  }, []);
+
+  const upsertGamificationToCloud = useCallback(async (userId, g) => {
+    if (!userId) return;
+    await insforge.database
+      .from('skillmap_gamification')
+      .upsert([{ user_id: userId, active_theme: g.activeTheme, active_avatar: g.activeAvatar }]);
+  }, []);
+
+  const upsertQuestsToCloud = useCallback(async (userId, quests, date) => {
+    if (!userId) return;
+    await insforge.database
+      .from('skillmap_daily_quests')
+      .upsert([{ user_id: userId, date, quests }]);
+  }, []);
   // Track completed lessons and challenges globally
   const [completedLessons, setCompletedLessons] = useState(() => {
     try {
@@ -93,7 +230,7 @@ export const UserProvider = ({ children }) => {
   // For achievement toast notifications
   const [newAchievements, setNewAchievements] = useState([]);
 
-  // Persist profile
+  // Persist profile (localStorage + debounced cloud)
   useEffect(() => {
     if (profile.careerInterests?.length || profile.skills?.length || profile.name) {
       saveUserProfile(profile);
@@ -101,23 +238,59 @@ export const UserProvider = ({ children }) => {
       if (hasProfile !== nextHasProfile) {
         setTimeout(() => setHasProfile(nextHasProfile), 0);
       }
+      // Debounce cloud upsert
+      const t = setTimeout(() => {
+        if (user?.id) upsertProfileToCloud(user.id, profile);
+      }, 1500);
+      return () => clearTimeout(t);
     }
-  }, [profile, hasProfile]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile, hasProfile, user?.id]);
 
   // Persist skill progress
   useEffect(() => {
     saveSkillProgress(skillProgress);
-  }, [skillProgress]);
+    // Debounce skill progress cloud upsert
+    if (user?.id && Object.keys(skillProgress).length) {
+      const t = setTimeout(async () => {
+        const rows = Object.entries(skillProgress).map(([skill_name, val]) => ({
+          user_id: user.id,
+          skill_name,
+          status: val.status,
+          updated_at: new Date().toISOString(),
+        }));
+        // Delete old rows and re-insert (simplest upsert for skill list)
+        await insforge.database.from('skillmap_skill_progress')
+          .delete().eq('user_id', user.id);
+        if (rows.length) {
+          await insforge.database.from('skillmap_skill_progress').insert(rows);
+        }
+      }, 2000);
+      return () => clearTimeout(t);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [skillProgress, user?.id]);
 
-  // Persist gamification
+  // Persist gamification (localStorage + cloud)
   useEffect(() => {
     saveGamification(gamification);
-  }, [gamification]);
+    const t = setTimeout(() => {
+      if (user?.id) upsertGamificationToCloud(user.id, gamification);
+    }, 1500);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gamification, user?.id]);
 
-  // Persist quests
+  // Persist quests (localStorage + cloud)
   useEffect(() => {
-    saveDailyQuests(dailyQuests, getTodayDateString());
-  }, [dailyQuests]);
+    const today = getTodayDateString();
+    saveDailyQuests(dailyQuests, today);
+    const t = setTimeout(() => {
+      if (user?.id) upsertQuestsToCloud(user.id, dailyQuests, today);
+    }, 1500);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dailyQuests, user?.id]);
 
   // Persist chat
   useEffect(() => {

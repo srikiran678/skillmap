@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
 import { motion } from 'framer-motion';
 import './Home.css';
 
@@ -24,7 +23,6 @@ const DOMAINS = [
 
 export default function Home() {
   const navigate = useNavigate();
-  const { hasProfile } = useUser();
   const heroRef = useRef(null);
 
   // Parallax on hero orbs
@@ -89,15 +87,13 @@ export default function Home() {
           >
             <button
               className="btn btn-primary btn-lg"
-              onClick={() => navigate(hasProfile ? '/dashboard' : '/profile')}
+              onClick={() => navigate('/login')}
             >
-              {hasProfile ? '📊 Access Mainframe (Dashboard)' : '🚀 Initialize Profile'}
+              🚀 Get Started
             </button>
-            {!hasProfile && (
-              <button className="btn btn-secondary btn-lg" onClick={() => navigate('/roadmap')}>
-                Preview Roadmap
-              </button>
-            )}
+            <button className="btn btn-secondary btn-lg" onClick={() => navigate('/roadmap')}>
+              Preview Roadmap
+            </button>
           </motion.div>
           
           <motion.div 
@@ -324,9 +320,9 @@ export default function Home() {
             </div>
             <button
               className="btn btn-primary btn-lg"
-              onClick={() => navigate(hasProfile ? '/dashboard' : '/profile')}
+              onClick={() => navigate('/login')}
             >
-              {hasProfile ? 'Enter Dashboard →' : 'Initialize Sequence →'}
+              🚀 Get Started →
             </button>
           </motion.div>
         </div>
