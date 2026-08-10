@@ -227,6 +227,35 @@ export const LEARNING_RESOURCES = {
   "LangChain": [
     { title: "LangChain Official Docs", url: "https://python.langchain.com/docs/introduction/", type: "Documentation", free: true },
   ],
+  "LangGraph": [
+    { title: "LangGraph Documentation", url: "https://langchain-ai.github.io/langgraph/", type: "Documentation", free: true },
+    { title: "DeepLearning.AI – AI Agents with LangGraph", url: "https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/", type: "Course", free: true }
+  ],
+  "Multi-Agent Systems": [
+    { title: "CrewAI Multi-Agent Framework", url: "https://docs.crewai.com/", type: "Documentation", free: true },
+    { title: "Microsoft AutoGen Documentation", url: "https://microsoft.github.io/autogen/", type: "Documentation", free: true }
+  ],
+  "Vector Databases": [
+    { title: "Pinecone Learning Center", url: "https://www.pinecone.io/learn/", type: "Guide", free: true },
+    { title: "Qdrant Vector Database Tutorials", url: "https://qdrant.tech/documentation/", type: "Documentation", free: true }
+  ],
+  "vLLM & Fast Inference": [
+    { title: "vLLM Documentation", url: "https://docs.vllm.ai/en/latest/", type: "Documentation", free: true },
+    { title: "High Performance LLM Serving with vLLM", url: "https://blog.vllm.ai/", type: "Articles", free: true }
+  ],
+  "Local LLM Fine-Tuning": [
+    { title: "Hugging Face Unsloth Fine-Tuning Guide", url: "https://github.com/unslothai/unsloth", type: "Tutorial", free: true },
+    { title: "LoRA & QLoRA Fine-Tuning Masterclass", url: "https://huggingface.co/blog/lora", type: "Guide", free: true }
+  ],
+  "Multimodal Prompting": [
+    { title: "Google Gemini Multimodal Prompting Guide", url: "https://ai.google.dev/docs/prompting_with_media", type: "Documentation", free: true }
+  ],
+  "DeepSeek R1 Reasoning": [
+    { title: "DeepSeek R1 Architecture & Open Paper", url: "https://github.com/deepseek-ai/DeepSeek-R1", type: "Research Paper", free: true }
+  ],
+  "Tool Calling & Function Execution": [
+    { title: "OpenAI Function Calling Guide", url: "https://platform.openai.com/docs/guides/function-calling", type: "Documentation", free: true }
+  ],
   "MLOps": [
     { title: "Made with ML – MLOps", url: "https://madewithml.com/courses/mlops/", type: "Course", free: true },
   ],

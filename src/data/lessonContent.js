@@ -1284,6 +1284,76 @@ console.log("\\nMeasurement results over 5 identical superposition runs:", outco
         ]
       }
     ]
+  },
+  {
+    id: 'agentic-ai',
+    title: 'Autonomous AI Agents & LangGraph',
+    icon: '🤖',
+    color: '#00f3ff',
+    gradient: 'linear-gradient(135deg, #6366f1, #00f3ff)',
+    desc: 'Master multi-agent orchestration, state persistence, and tool execution.',
+    lessons: [
+      {
+        id: 'agentic-intro',
+        title: 'Building AI Agents with State & Tools',
+        duration: '15 min',
+        xp: 60,
+        content: `## What is an AI Agent?
+
+An **AI Agent** goes beyond simple prompt-response interactions. It uses a Reasoning Engine (LLM) combined with:
+1. **Memory & State**: Keeps track of previous execution steps and goals.
+2. **Tools**: Functions to search the web, execute SQL queries, or edit local files.
+3. **Planning & Reflection**: Breaks complex tasks into sub-tasks and evaluates output quality.
+
+### Agent Loop Paradigm
+\`\`\`
+User Query -> Plan Task -> Select Tool -> Execute Tool -> Evaluate Result -> Final Answer
+\`\`\`
+
+> **Pro Tip:** In LangGraph, agents are modeled as stateful directed graphs where nodes represent LLMs/Tools and edges represent decision logic!`,
+        code: `// Simulation of an Autonomous AI Agent Loop
+class AIAgent {
+  constructor(name, role) {
+    this.name = name;
+    this.role = role;
+    this.tools = new Map();
+    this.memory = [];
+  }
+
+  registerTool(toolName, fn) {
+    this.tools.set(toolName, fn);
+  }
+
+  async executeTask(userTask) {
+    console.log(\`🤖 [\${this.name} - \${this.role}] Starting task: "\${userTask}"\`);
+    this.memory.push({ role: 'user', content: userTask });
+
+    // Step 1: Planning
+    console.log("🧠 Thinking: Task requires code execution and calculation.");
+    
+    // Step 2: Tool Execution
+    if (this.tools.has('calculator')) {
+      const calcResult = this.tools.get('calculator')(42, 108);
+      console.log(\`🛠️ Tool Triggered: calculator(42, 108) => \${calcResult}\`);
+      
+      const finalMsg = \`Task Complete! Computed value is \${calcResult}.\`;
+      this.memory.push({ role: 'assistant', content: finalMsg });
+      console.log(\`✅ Result: \${finalMsg}\`);
+      return finalMsg;
+    }
+  }
+}
+
+const agent = new AIAgent("SkillBot", "Senior AI Engineer");
+agent.registerTool('calculator', (a, b) => a * b);
+agent.executeTask("Calculate total neural capacity for 42 units with 108 cores each");`,
+        quiz: [
+          { q: 'What distinguishes an AI Agent from a basic LLM prompt?', options: ['An agent can use tools, maintain state, and perform multi-step planning', 'An agent is written strictly in C++', 'An agent does not require an LLM model', 'An agent cannot read code'], answer: 0 },
+          { q: 'In LangGraph, how are agentic workflows modeled?', options: ['As flat arrays', 'As stateful directed graphs of nodes and edges', 'As binary trees', 'As CSS grid layouts'], answer: 1 },
+          { q: 'What role do Tools play in AI Agent architectures?', options: ['They change the font color', 'They allow agents to interact with external APIs, databases, and file systems', 'They slow down execution speed', 'They delete model weights'], answer: 1 }
+        ]
+      }
+    ]
   }
 ];
 

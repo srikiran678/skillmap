@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import YouTubeAIAgent from '../components/YouTubeAIAgent';
 import './Home.css';
 
 const FEATURES = [
@@ -147,70 +148,8 @@ export default function Home() {
 
         <div className="home__ai-section" style={{ marginTop: 40, display: 'grid', gridTemplateColumns: '1fr', gap: '40px' }}>
           
-          {/* Video stream tiles */}
-          <div>
-            <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: 20, fontSize: '1.4rem', color: 'var(--clr-primary)' }}>
-              🎥 Trending Video Broadcasts
-            </h3>
-            <div className="grid-3">
-              {[
-                {
-                  id: 'vid-google-essential',
-                  title: 'Google AI Essentials — Complete Overview',
-                  channel: 'Google Career Certificates',
-                  url: 'https://www.youtube.com/embed/01sTQyDhaD8', // Google AI Essentials
-                  desc: 'A complete run-through of how to implement prompt engineering, boost workplace productivity, and use generative AI responsibly.',
-                  views: '1.2M views',
-                  time: '2 weeks ago'
-                },
-                {
-                  id: 'vid-andrew-ng',
-                  title: 'AI for Everyone: Core Concepts',
-                  channel: 'DeepLearning.AI',
-                  url: 'https://www.youtube.com/embed/5NgNicANyqM',
-                  desc: 'Andrew Ng breaks down how deep learning algorithms function, where machine learning can be applied, and its true limits.',
-                  views: '940K views',
-                  time: '1 month ago'
-                },
-                {
-                  id: 'vid-generative-ai',
-                  title: 'Generative AI Roadmap in 2026',
-                  channel: 'Neural Academy',
-                  url: 'https://www.youtube.com/embed/zjkBMFhNj_g',
-                  desc: 'The complete mathematical and developmental guide to mastery of Large Language Models (LLMs), Transformer networks, and diffusion tools.',
-                  views: '320K views',
-                  time: '3 days ago'
-                }
-              ].map(vid => (
-                <div key={vid.id} className="glass" style={{ padding: 0, overflow: 'hidden', borderRadius: 'var(--radius-xl)', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-                    <iframe
-                      src={vid.url}
-                      title={vid.title}
-                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                  <div style={{ padding: 20, display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--clr-primary)', fontWeight: 700 }}>
-                      {vid.channel}
-                    </span>
-                    <h4 style={{ fontSize: '1rem', marginTop: 6, marginBottom: 8, fontWeight: 700, lineHeight: 1.4 }}>
-                      {vid.title}
-                    </h4>
-                    <p style={{ fontSize: '0.82rem', color: 'var(--clr-text-muted)', marginBottom: 14, flex: 1 }}>
-                      {vid.desc}
-                    </p>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--clr-text-dim)' }}>
-                      <span>👁️ {vid.views}</span>
-                      <span>⏱️ {vid.time}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Automated YouTube AI Video Collector Agent Component */}
+          <YouTubeAIAgent />
 
           {/* Free Courses */}
           <div style={{ marginTop: 20 }}>

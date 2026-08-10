@@ -3076,6 +3076,82 @@ export const JOB_SKILLS_DB = [
     ],
     academicRelevance: ["Design", "Architecture", "Human-Computer Interaction"],
     relatedJobs: ["AR/VR Designer", "Metaverse Architect"]
+  },
+
+  // ── ADVANCED AI & AGENTIC ENGINEERING ──
+  {
+    jobTitle: "AI Agent Engineer",
+    domain: "Data & AI",
+    icon: "🤖",
+    description: "Design autonomous AI agents using LangGraph, AutoGen, and CrewAI frameworks to perform multi-step reasoning.",
+    avgSalary: "$130,000 – $190,000",
+    skillsRequired: [
+      { skill: "LangGraph", levelNeeded: "Advanced" },
+      { skill: "Multi-Agent Systems", levelNeeded: "Advanced" },
+      { skill: "Python", levelNeeded: "Advanced" },
+      { skill: "LLM APIs", levelNeeded: "Advanced" },
+      { skill: "Vector Databases", levelNeeded: "Intermediate" },
+      { skill: "Tool Calling & Function Execution", levelNeeded: "Advanced" },
+      { skill: "RAG Systems", levelNeeded: "Intermediate" },
+      { skill: "Prompt Engineering", levelNeeded: "Intermediate" }
+    ],
+    academicRelevance: ["Computer Science", "Artificial Intelligence", "Robotics"],
+    relatedJobs: ["Autonomous Agent Developer", "LangChain Engineer", "AI Workflow Architect"]
+  },
+  {
+    jobTitle: "LLMOps & RAG Specialist",
+    domain: "Data & AI",
+    icon: "⚡",
+    description: "Build, deploy, and scale high-throughput RAG systems, vLLM inference engines, and vector database indices.",
+    avgSalary: "$135,000 – $195,000",
+    skillsRequired: [
+      { skill: "vLLM & Fast Inference", levelNeeded: "Advanced" },
+      { skill: "RAG Systems", levelNeeded: "Advanced" },
+      { skill: "Vector Databases", levelNeeded: "Advanced" },
+      { skill: "Local LLM Fine-Tuning", levelNeeded: "Intermediate" },
+      { skill: "MLOps", levelNeeded: "Intermediate" },
+      { skill: "Docker", levelNeeded: "Intermediate" },
+      { skill: "Python", levelNeeded: "Advanced" },
+      { skill: "GPU Optimization", levelNeeded: "Beginner" }
+    ],
+    academicRelevance: ["Computer Science", "Data Engineering", "Cloud Computing"],
+    relatedJobs: ["RAG Architect", "Inference Engineer", "Vector DB Specialist"]
+  },
+  {
+    jobTitle: "Multimodal AI Developer",
+    domain: "Data & AI",
+    icon: "👁️",
+    description: "Develop applications combining vision, speech, text, and reasoning models for real-time human interaction.",
+    avgSalary: "$140,000 – $200,000",
+    skillsRequired: [
+      { skill: "Multimodal Prompting", levelNeeded: "Advanced" },
+      { skill: "Computer Vision", levelNeeded: "Intermediate" },
+      { skill: "Audio & Speech Processing", levelNeeded: "Intermediate" },
+      { skill: "PyTorch", levelNeeded: "Intermediate" },
+      { skill: "Transformers / HuggingFace", levelNeeded: "Advanced" },
+      { skill: "Python", levelNeeded: "Advanced" },
+      { skill: "OpenCV", levelNeeded: "Intermediate" }
+    ],
+    academicRelevance: ["Computer Science", "Artificial Intelligence", "Electrical Engineering"],
+    relatedJobs: ["Vision-Language Model Specialist", "Voice AI Engineer"]
+  },
+  {
+    jobTitle: "Autonomous AI Systems Architect",
+    domain: "Data & AI",
+    icon: "🌐",
+    description: "Architect end-to-end self-correcting AI networks, synthetic data generators, and reasoning model pipelines.",
+    avgSalary: "$150,000 – $220,000",
+    skillsRequired: [
+      { skill: "DeepSeek R1 Reasoning", levelNeeded: "Advanced" },
+      { skill: "LangGraph", levelNeeded: "Advanced" },
+      { skill: "System Design", levelNeeded: "Advanced" },
+      { skill: "Reinforcement Learning", levelNeeded: "Intermediate" },
+      { skill: "Python", levelNeeded: "Advanced" },
+      { skill: "Cloud Computing", levelNeeded: "Advanced" },
+      { skill: "Security & AI Safeguards", levelNeeded: "Intermediate" }
+    ],
+    academicRelevance: ["Computer Science", "AI Systems", "Software Engineering"],
+    relatedJobs: ["Principal AI Architect", "Chief AI Systems Engineer"]
   }
 ];
 

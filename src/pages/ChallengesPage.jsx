@@ -90,6 +90,48 @@ const CHALLENGES_LIST = [
     explanation: 'To maintain consistency, a system must reject writes on partitioned nodes so that stale or split-brain records do not accumulate.'
   },
   {
+    id: 'ch-vector-sim',
+    title: 'Vector Cosine Similarity',
+    category: 'AI & Data Science',
+    difficulty: 'hard',
+    desc: 'Write a JavaScript function cosineSimilarity(vecA, vecB) that calculates the cosine similarity between two equal-length numerical vectors. Formula: (vecA · vecB) / (||vecA|| * ||vecB||). Example: [1,2], [2,4] -> 1.0',
+    duration: 10,
+    xp: 130,
+    coins: 45,
+    type: 'code',
+    starterCode: `function cosineSimilarity(vecA, vecB) {\n  // Your code here\n  return 1.0;\n}\n\nconsole.log(cosineSimilarity([1, 0, 0], [0, 1, 0]));`,
+    checkCode: `
+      if (typeof cosineSimilarity !== 'function') throw new Error("cosineSimilarity function is not defined");
+      const s1 = cosineSimilarity([1, 0], [1, 0]);
+      const s2 = cosineSimilarity([1, 0], [0, 1]);
+      if (Math.abs(s1 - 1.0) > 0.001) throw new Error(\`Expected similarity of identical vectors to be 1.0, got \${s1}\`);
+      if (Math.abs(s2 - 0.0) > 0.001) throw new Error(\`Expected orthogonal vectors to be 0.0, got \${s2}\`);
+      console.log("✓ All vector test cases passed!");
+    `
+  },
+  {
+    id: 'ch-langgraph-agent',
+    title: 'AI Agent Tool Selector',
+    category: 'AI Agents',
+    difficulty: 'medium',
+    desc: 'Write a function routeAgentTool(query) that inspects a user prompt string. If query contains "calc" or math symbols (+, -, *, /), return "calculator". If it contains "search" or "google", return "web_search". Otherwise return "llm_chat".',
+    duration: 5,
+    xp: 90,
+    coins: 30,
+    type: 'code',
+    starterCode: `function routeAgentTool(query) {\n  // Your code here\n  return "llm_chat";\n}\n\nconsole.log(routeAgentTool("Please search latest news"));`,
+    checkCode: `
+      if (typeof routeAgentTool !== 'function') throw new Error("routeAgentTool function is not defined");
+      const r1 = routeAgentTool("calc 45 + 50");
+      const r2 = routeAgentTool("search Google for AI tools");
+      const r3 = routeAgentTool("tell me a story");
+      if (r1 !== "calculator") throw new Error(\`Expected "calculator", got "\${r1}"\`);
+      if (r2 !== "web_search") throw new Error(\`Expected "web_search", got "\${r2}"\`);
+      if (r3 !== "llm_chat") throw new Error(\`Expected "llm_chat", got "\${r3}"\`);
+      console.log("✓ All agent router test cases passed!");
+    `
+  },
+  {
     id: 'ch-twosum',
     title: 'Two Sum Problem',
     category: 'Algorithms',

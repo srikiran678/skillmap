@@ -13,6 +13,8 @@ import GamificationHub from './pages/GamificationHub';
 import LearnPage from './pages/LearnPage';
 import ChallengesPage from './pages/ChallengesPage';
 import CertificatesPage from './pages/CertificatesPage';
+import AIToolsPage from './pages/AIToolsPage';
+import GitHubReposPage from './pages/GitHubReposPage';
 
 // ── Auth guard: redirect to /login if not signed in ──────────
 function RequireAuth({ children }) {
@@ -95,6 +97,12 @@ export default function App() {
             <RequireAuth>
               <UserProvider><Navbar /><CertificatesPage /></UserProvider>
             </RequireAuth>
+          } />
+          <Route path="/ai-tools" element={
+            <UserProvider><Navbar /><AIToolsPage /></UserProvider>
+          } />
+          <Route path="/github-repos" element={
+            <UserProvider><Navbar /><GitHubReposPage /></UserProvider>
           } />
 
           <Route path="*" element={<Navigate to="/" replace />} />

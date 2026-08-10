@@ -143,6 +143,8 @@ export default function Dashboard() {
             })()}
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button className="btn btn-primary btn-sm" onClick={() => navigate('/ai-tools')}>🤖 AI Tools</button>
+            <button className="btn btn-secondary btn-sm" onClick={() => navigate('/github-repos')}>🐙 GitHub Repos</button>
             <button className="btn btn-secondary btn-sm" onClick={() => navigate('/profile')}>✏️ Reconfigure</button>
             <button className="btn btn-primary btn-sm" onClick={() => navigate('/hub')}>🎮 Game Hub</button>
             <button className="btn btn-secondary btn-sm" onClick={() => navigate('/roadmap')}>🗺️ Roadmap</button>

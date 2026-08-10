@@ -6,6 +6,8 @@ import './Navbar.css';
 
 const NAV_LINKS = [
   { to: '/', label: 'Home', icon: '🏠' },
+  { to: '/ai-tools', label: 'AI Tools', icon: '🤖' },
+  { to: '/github-repos', label: 'GitHub Repos', icon: '🐙' },
   { to: '/profile', label: 'Profile', icon: '📄' },
   { to: '/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/roadmap', label: 'Roadmap', icon: '🗺️' },
