@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import ProgressBar from '../components/ProgressBar';
 import { generateRoadmap, estimateLearningTime } from '../utils/skillEngine';
@@ -17,16 +17,43 @@ export default function Roadmap() {
   const [filterPriority, setFilterPriority] = useState('All');
   const [expandedSkill, setExpandedSkill] = useState(null);
 
-  const roadmap = useMemo(() => generateRoadmap(selectedJobs || [], profile?.skills || []), [selectedJobs, profile?.skills]);
+  const [searchParams] = useSearchParams();
+  const querySkills = useMemo(() => {
+    const raw = searchParams.get('skills');
+    return raw ? raw.split(',').map(s => s.trim()).filter(Boolean) : [];
+  }, [searchParams]);
+  const queryRole = searchParams.get('role') || '';
 
-  if (!hasProfile) {
+  const roadmap = useMemo(() => {
+    if (querySkills.length > 0) {
+      return querySkills.map((sk, idx) => ({
+        skill: sk,
+        levelNeeded: 'Intermediate',
+        priority: idx < 2 ? 'High' : 'Medium',
+        status: 'To Learn',
+        isMastered: false,
+      }));
+    }
+    return generateRoadmap(selectedJobs || [], profile?.skills || []);
+  }, [querySkills, selectedJobs, profile?.skills]);
+
+  if (!hasProfile && querySkills.length === 0) {
     return (
       <div className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
         <div className="glass" style={{ textAlign: 'center', padding: 48, maxWidth: 440 }}>
-          <div style={{ fontSize: '3rem', marginBottom: 16 }}>🔒</div>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: 12 }}>No Profile Found</h2>
-          <p style={{ color: 'var(--clr-text-muted)', marginBottom: 24 }}>Build your profile first to see your personalized roadmap.</p>
-          <button className="btn btn-primary" onClick={() => navigate('/profile')}>Build My Profile →</button>
+          <div style={{ fontSize: '3rem', marginBottom: 16 }}>🗺️</div>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: 12 }}>Explore Skill Roadmaps</h2>
+          <p style={{ color: 'var(--clr-text-muted)', marginBottom: 24 }}>
+            Build your personalized profile or explore our comprehensive interactive tutorials in the Learning Hub.
+          </p>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+            <button className="btn btn-primary" onClick={() => navigate('/learn')}>
+              📚 Browse All Lessons →
+            </button>
+            <button className="btn btn-secondary" onClick={() => navigate('/profile')}>
+              Build Profile →
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -86,8 +113,23 @@ export default function Roadmap() {
           <div>
             <h1>🗺️ Your Skill <span className="text-gradient">Roadmap</span></h1>
             <p style={{ color: 'var(--clr-text-muted)', marginTop: 6 }}>
-              {roadmap.length} skills to master across {selectedJobs.length} target career{selectedJobs.length !== 1 ? 's' : ''}
+              {querySkills.length > 0
+                ? `🎯 ResumeForge Skill Gap Roadmap: ${querySkills.length} skills to master for ${queryRole || 'Target Career'}`
+                : `${roadmap.length} skills to master across ${selectedJobs.length} target career${selectedJobs.length !== 1 ? 's' : ''}`
+              }
             </p>
+            {querySkills.length > 0 && (
+              <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <span className="badge badge-advanced">RESUMEFORGE IMPORT</span>
+                <button
+                  className="btn btn-primary btn-sm"
+                  style={{ fontSize: '0.78rem', padding: '4px 12px' }}
+                  onClick={() => navigate(`/learn?skills=${encodeURIComponent(querySkills.join(','))}&role=${encodeURIComponent(queryRole)}`)}
+                >
+                  📚 Open Lessons for These Gaps →
+                </button>
+              </div>
+            )}
           </div>
           <button className="btn btn-secondary btn-sm" onClick={() => navigate('/dashboard')}>
             📊 Back to Dashboard

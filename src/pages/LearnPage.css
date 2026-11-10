@@ -717,3 +717,49 @@
   box-shadow: 0 0 8px rgba(0,243,255,0.5);
   transition: width 0.8s ease;
 }
+
+/* -- ResumeForge Bridge Banner -- */
+.learn__bridge-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  border-radius: var(--radius-xl);
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(0, 243, 255, 0.08));
+  border: 1px solid rgba(0, 243, 255, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 243, 255, 0.1);
+  animation: fadeIn 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .learn__bridge-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.learn__ai-float-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6366f1, #00f3ff);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5), 0 0 16px rgba(0, 243, 255, 0.3);
+  cursor: pointer;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.learn__ai-float-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.6), 0 0 24px rgba(0, 243, 255, 0.5);
+}

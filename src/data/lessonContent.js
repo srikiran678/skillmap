@@ -1,3 +1,11 @@
+import {
+  extraCloudLessons,
+  extraSystemDesignLessons,
+  extraAgenticLessons,
+  modernFrontendTrack,
+  highPerformanceBackendTrack,
+} from './extraLessonTracks.js';
+
 // ============================================================
 // LESSON CONTENT DATABASE — SkillMap
 // W3Schools-inspired bite-sized lessons with quizzes
@@ -714,6 +722,7 @@ for (let i = 1; i <= 7; i++) {
           { q: 'Which is NOT a benefit of microservices?', options: ['Independent deployment', 'Technology flexibility', 'Simpler local development', 'Fault isolation'], answer: 2 },
         ]
       },
+      ...extraSystemDesignLessons,
     ]
   },
   {
@@ -1053,7 +1062,8 @@ console.log(\`Estimated Daily Cost: $\${asg.calculateDailyCost(COST_PER_INSTANCE
 
 asg.evaluateInstances(20);
 console.log(\`Estimated Daily Cost: $\${asg.calculateDailyCost(COST_PER_INSTANCE_HR).toFixed(2)}\`);`,
-      }
+      },
+      ...extraCloudLessons,
     ]
   },
   {
@@ -1352,9 +1362,12 @@ agent.executeTask("Calculate total neural capacity for 42 units with 108 cores e
           { q: 'In LangGraph, how are agentic workflows modeled?', options: ['As flat arrays', 'As stateful directed graphs of nodes and edges', 'As binary trees', 'As CSS grid layouts'], answer: 1 },
           { q: 'What role do Tools play in AI Agent architectures?', options: ['They change the font color', 'They allow agents to interact with external APIs, databases, and file systems', 'They slow down execution speed', 'They delete model weights'], answer: 1 }
         ]
-      }
+      },
+      ...extraAgenticLessons,
     ]
-  }
+  },
+  modernFrontendTrack,
+  highPerformanceBackendTrack,
 ];
 
 // ── Helper Functions ──────────────────────────────────────────

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import InteractiveAITutor from '../components/InteractiveAITutor';
 import { useUser } from '../context/UserContext';
 import { LESSON_TRACKS, getLesson } from '../data/lessonContent';
 import { computeEarnedCertificates } from '../utils/certificateEngine';
@@ -30,7 +31,7 @@ function renderMarkdown(md) {
 }
 
 // ── Try-It Editor ─────────────────────────────────────────────
-function TryItEditor({ code, lang }) {
+function TryItEditor({ code, lang, onOpenAiReview }) {
   const [editorCode, setEditorCode] = useState(code);
   const [running, setRunning] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
@@ -112,6 +113,15 @@ function TryItEditor({ code, lang }) {
           {running ? '⏳' : '▶'} {running ? 'Running...' : 'Run Code'}
         </button>
         <button
+          type="button"
+          className="learn__run-btn"
+          style={{ background: 'linear-gradient(135deg, #6366f1, #00f3ff)', border: 'none', marginLeft: 8 }}
+          onClick={() => onOpenAiReview && onOpenAiReview(editorCode, lang)}
+          title="Analyze this code with Senior AI Dev for performance & bug detection"
+        >
+          🤖 Senior AI Review
+        </button>
+        <button
           className="learn__reset-btn"
           onClick={() => { setEditorCode(code); setConsoleOut(''); setPreviewHtml(''); }}
         >
@@ -160,6 +170,31 @@ function TryItEditor({ code, lang }) {
           Press ▶ Run Code to see output
         </div>
       )}
+
+      {/* Floating AI Mentor Button */}
+      <button
+        className="learn__ai-float-btn"
+        onClick={() => setShowAiMentor(prev => !prev)}
+        title="Open Sentinel AI Senior Dev Mentor"
+      >
+        <span>🤖</span>
+        <span>Sentinel AI Mentor</span>
+        {querySkills.length > 0 && (
+          <span style={{ background: '#ff0055', color: '#fff', fontSize: '0.65rem', padding: '1px 6px', borderRadius: 999 }}>
+            {querySkills.length}
+          </span>
+        )}
+      </button>
+
+      {/* Interactive AI Tutor Component */}
+      <InteractiveAITutor
+        activeCode={activeCodeForAi || activeLesson?.code || ''}
+        activeLang={activeLangForAi || (activeLesson?.code?.trim().startsWith('<!DOCTYPE') ? 'html' : activeLesson?.code?.trim().startsWith('#') ? 'python' : 'javascript')}
+        skillGaps={querySkills}
+        targetRole={queryRole}
+        isOpen={showAiMentor}
+        onClose={() => setShowAiMentor(false)}
+      />
     </div>
   );
 }
@@ -273,9 +308,24 @@ function QuizPanel({ quiz, onPass, lessonXp }) {
 // ── Main Page ─────────────────────────────────────────────────
 export default function LearnPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { profile, hasProfile, addXP, addCoins, extendStreak, updateQuestProgress, completedLessons, completeLesson } = useUser();
 
+  const querySkills = React.useMemo(() => {
+    const raw = searchParams.get('skills');
+    return raw ? raw.split(',').map(s => s.trim()).filter(Boolean) : [];
+  }, [searchParams]);
+  const queryRole = searchParams.get('role') || '';
+
   const [activeTrackId, setActiveTrackId] = useState(null);
+  const [activeCodeForAi, setActiveCodeForAi] = useState('');
+  const [activeLangForAi, setActiveLangForAi] = useState('javascript');
+
+  const handleOpenAiReview = useCallback((codeVal, langVal) => {
+    setActiveCodeForAi(codeVal);
+    setActiveLangForAi(langVal);
+    setShowAiMentor(true);
+  }, []);
   const [activeLessonId, setActiveLessonId] = useState(null);
   const [quizPassed, setQuizPassed] = useState(false);
 
@@ -341,20 +391,7 @@ export default function LearnPage() {
 
   const isLessonDone = completedLessons[activeLessonId]?.completed;
 
-  if (!hasProfile) {
-    return (
-      <div className="learn page">
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
-          <div className="glass" style={{ textAlign: 'center', padding: 48, maxWidth: 440 }}>
-            <div style={{ fontSize: '3rem', marginBottom: 16 }}>📚</div>
-            <h2 style={{ fontFamily: 'var(--font-display)', marginBottom: 12 }}>Build Your Profile First</h2>
-            <p style={{ color: 'var(--clr-text-muted)', marginBottom: 24 }}>Set up your career profile to get personalized learning tracks.</p>
-            <button className="btn btn-primary" onClick={() => navigate('/profile')}>Get Started →</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+// Profile check relaxed for instant frictionless guest learning
 
   // ── Track Selection View ──────────────────────────────────
   if (!activeTrackId) {
@@ -380,6 +417,57 @@ export default function LearnPage() {
             <p style={{ color: 'var(--clr-text-muted)', marginBottom: 20 }}>
               W3Schools-style interactive lessons with live code editors, quizzes, and certificates.
             </p>
+
+            {/* ResumeForge Skill Gap Bridge Banner */}
+            {querySkills.length > 0 && (
+              <div className="learn__bridge-banner glass animate-fadeInUp">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ fontSize: '2.2rem' }}>🎯</div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <h3 style={{ margin: 0, fontSize: '1.1rem', fontFamily: 'var(--font-display)' }}>
+                        ResumeForge Skill Gap Bridge
+                      </h3>
+                      <span className="badge badge-advanced" style={{ background: '#6366f1', color: '#fff' }}>
+                        BRIDGE ACTIVE
+                      </span>
+                    </div>
+                    <p style={{ margin: '4px 0 10px 0', fontSize: '0.85rem', color: 'var(--clr-text-muted)' }}>
+                      Target Career: <strong style={{ color: '#00f3ff' }}>{queryRole || 'Senior Engineer'}</strong>. Priority skill gaps detected from your resume:
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {querySkills.map(sk => (
+                        <span
+                          key={sk}
+                          className="badge badge-intermediate"
+                          style={{ background: 'rgba(99, 102, 241, 0.25)', border: '1px solid #6366f1', color: '#c7d2fe', fontWeight: 600, padding: '4px 10px' }}
+                        >
+                          ⚡ {sk}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  className="btn btn-primary btn-sm"
+                  style={{ marginLeft: 'auto', alignSelf: 'center', whiteSpace: 'nowrap', padding: '10px 18px' }}
+                  onClick={() => setShowAiMentor(true)}
+                >
+                  🤖 Sentinel AI Study Plan
+                </button>
+              </div>
+            )}
+
+            {!hasProfile && querySkills.length === 0 && (
+              <div className="glass" style={{ padding: '12px 20px', borderRadius: 12, marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--clr-text-muted)' }}>
+                  🚀 <strong>Guest Explorer Mode</strong> · Explore all 12 tracks and 30 interactive lessons freely! Complete quizzes to earn bonus XP.
+                </span>
+                <button className="btn btn-secondary btn-sm" onClick={() => navigate('/profile')}>
+                  Set Target Role →
+                </button>
+              </div>
+            )}
 
             {/* Search Input */}
             <div style={{ marginBottom: 24 }}>
@@ -669,6 +757,7 @@ export default function LearnPage() {
                   : activeLesson.code?.trim().startsWith('#') ? 'python'
                   : 'js'
                 }
+                onOpenAiReview={handleOpenAiReview}
               />
             )}
 

@@ -253,6 +253,34 @@ export const LEARNING_RESOURCES = {
   "DeepSeek R1 Reasoning": [
     { title: "DeepSeek R1 Architecture & Open Paper", url: "https://github.com/deepseek-ai/DeepSeek-R1", type: "Research Paper", free: true }
   ],
+  "Model Context Protocol (MCP)": [
+    { title: "Model Context Protocol Official Docs", url: "https://modelcontextprotocol.io", type: "Documentation", free: true },
+    { title: "Anthropic MCP Specification and SDKs", url: "https://github.com/modelcontextprotocol", type: "Documentation", free: true },
+  ],
+  "MCP": [
+    { title: "Model Context Protocol Specification", url: "https://modelcontextprotocol.io", type: "Documentation", free: true },
+  ],
+  "pgvector": [
+    { title: "pgvector GitHub and Guide", url: "https://github.com/pgvector/pgvector", type: "Documentation", free: true },
+    { title: "Supabase pgvector Guide", url: "https://supabase.com/docs/guides/ai", type: "Guide", free: true },
+  ],
+  "Apache Kafka": [
+    { title: "Apache Kafka Official Quickstart", url: "https://kafka.apache.org/quickstart", type: "Documentation", free: true },
+    { title: "Confluent Kafka Fundamentals", url: "https://developer.confluent.io/courses/apache-kafka/overview/", type: "Course", free: true },
+  ],
+  "Kafka": [
+    { title: "Apache Kafka Official Docs", url: "https://kafka.apache.org/documentation/", type: "Documentation", free: true },
+  ],
+  "gRPC": [
+    { title: "gRPC Official Documentation", url: "https://grpc.io/docs/", type: "Documentation", free: true },
+    { title: "Protocol Buffers Guide", url: "https://protobuf.dev", type: "Documentation", free: true },
+  ],
+  "React 19": [
+    { title: "React 19 Release and Actions", url: "https://react.dev/blog/2024/04/25/react-19", type: "Documentation", free: true },
+  ],
+  "Next.js 15": [
+    { title: "Next.js 15 Announcement and App Router", url: "https://nextjs.org/blog/next-15", type: "Documentation", free: true },
+  ],
   "Tool Calling & Function Execution": [
     { title: "OpenAI Function Calling Guide", url: "https://platform.openai.com/docs/guides/function-calling", type: "Documentation", free: true }
   ],

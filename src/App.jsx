@@ -36,7 +36,11 @@ function RequireAuth({ children }) {
       </div>
     );
   }
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  const isGuest = localStorage.getItem('skillmap_guest_mode') === 'true' ||
+    window.location.search.includes('skills=') ||
+    window.location.search.includes('guest=');
+
+  return (isAuthenticated || isGuest) ? children : <Navigate to="/login" replace />;
 }
 
 // ── Redirect signed-in users away from /login ─────────────────
@@ -84,9 +88,7 @@ export default function App() {
             </RequireAuth>
           } />
           <Route path="/learn" element={
-            <RequireAuth>
-              <UserProvider><Navbar /><LearnPage /></UserProvider>
-            </RequireAuth>
+            <UserProvider><Navbar /><LearnPage /></UserProvider>
           } />
           <Route path="/challenges" element={
             <RequireAuth>
