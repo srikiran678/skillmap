@@ -25,7 +25,10 @@ export const AuthProvider = ({ children }) => {
           window.history.replaceState({}, document.title, cleanUrl);
         }
 
-        const { data } = await insforge.auth.getCurrentUser();
+        const userPromise = insforge.auth.getCurrentUser();
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 1000));
+        const res = await Promise.race([userPromise, timeoutPromise]);
+        const data = res?.data;
         setUser(data?.user ?? null);
       } catch (err) {
         console.error('Failed to restore session:', err);

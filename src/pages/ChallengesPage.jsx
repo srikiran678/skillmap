@@ -1,3 +1,4 @@
+import InteractiveAITutor from '../components/InteractiveAITutor';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
@@ -208,6 +209,71 @@ const CHALLENGES_LIST = [
       console.log("✓ All test cases passed!");
     `
   }
+,
+  {
+    id: "ch-lru-cache",
+    title: "LRU Cache (Least Recently Used)",
+    category: "Algorithms",
+    difficulty: "hard",
+    desc: "Implement an LRUCache class with get(key) and put(key, value) in O(1) time complexity. When the cache reaches its capacity, it should invalidate and evict the least recently used item before inserting a new item.",
+    duration: 15,
+    xp: 150,
+    coins: 50,
+    type: "code",
+    starterCode: "class LRUCache {\n  constructor(capacity) {\n    this.capacity = capacity;\n    this.cache = new Map();\n  }\n\n  get(key) {\n    if (!this.cache.has(key)) return -1;\n    const val = this.cache.get(key);\n    this.cache.delete(key);\n    this.cache.set(key, val);\n    return val;\n  }\n\n  put(key, value) {\n    if (this.cache.has(key)) {\n      this.cache.delete(key);\n    } else if (this.cache.size >= this.capacity) {\n      const firstKey = this.cache.keys().next().value;\n      this.cache.delete(firstKey);\n    }\n    this.cache.set(key, value);\n  }\n}\n\n// Test Run\nconst lru = new LRUCache(2);\nlru.put(1, 1);\nlru.put(2, 2);\nconsole.log(lru.get(1)); // 1\nlru.put(3, 3); // evicts key 2\nconsole.log(lru.get(2)); // -1",
+    checkCode: "\n      if (typeof LRUCache !== 'function') throw new Error(\"LRUCache class is not defined\");\n      const c = new LRUCache(2);\n      c.put(1, 1);\n      c.put(2, 2);\n      if (c.get(1) !== 1) throw new Error(\"Expected get(1) to be 1\");\n      c.put(3, 3);\n      if (c.get(2) !== -1) throw new Error(\"Expected key 2 to be evicted (-1)\");\n      c.put(4, 4);\n      if (c.get(1) !== -1) throw new Error(\"Expected key 1 to be evicted (-1)\");\n      if (c.get(3) !== 3) throw new Error(\"Expected get(3) to be 3\");\n      if (c.get(4) !== 4) throw new Error(\"Expected get(4) to be 4\");\n      console.log(\"✓ All LRUCache test cases passed!\");\n    "
+  },
+  {
+    id: "ch-docker-stage",
+    title: "Multi-Stage Docker Architecture",
+    category: "Cloud Architecture",
+    difficulty: "medium",
+    desc: "Why do production engineers use Multi-Stage Docker builds instead of a single builder image?",
+    duration: 4,
+    xp: 80,
+    coins: 25,
+    type: "mcq",
+    options: [
+      "Multi-stage builds allow compiling in one heavy environment and copying only minimal artifacts to a tiny runtime scratch image, drastically reducing CVE vulnerability surface and image size.",
+      "Multi-stage builds automatically upload images to all clouds simultaneously.",
+      "Multi-stage builds bypass Linux kernel namespaces for faster raw hardware execution.",
+      "Single builder images cannot run Node.js or Go binaries."
+],
+    answer: 0,
+    explanation: "Multi-stage builds separate compile tools (SDKs, compilers) from the runtime environment. Only the production artifact is copied to the final slim image (e.g., Alpine or Distroless), reducing image size from 1GB+ down to <50MB and eliminating build CVEs."
+  },
+  {
+    id: "ch-rag-rrf",
+    title: "Reciprocal Rank Fusion (RRF) for Hybrid RAG",
+    category: "Autonomous AI",
+    difficulty: "hard",
+    desc: "Write a JavaScript function rrfScore(denseRank, sparseRank, k = 60) that computes the hybrid reciprocal rank fusion score between a vector semantic search rank and a BM25 keyword rank: score = 1/(k + denseRank) + 1/(k + sparseRank).",
+    duration: 10,
+    xp: 120,
+    coins: 40,
+    type: "code",
+    starterCode: "function rrfScore(denseRank, sparseRank, k = 60) {\n  // Compute RRF hybrid search score\n  return 1 / (k + denseRank) + 1 / (k + sparseRank);\n}\n\nconsole.log(\"RRF Score Rank (1, 1):\", rrfScore(1, 1));",
+    checkCode: "\n      if (typeof rrfScore !== 'function') throw new Error(\"rrfScore function is not defined\");\n      const s1 = rrfScore(1, 1, 60);\n      const expected1 = 1/61 + 1/61;\n      if (Math.abs(s1 - expected1) > 0.0001) throw new Error(\"RRF rank 1,1 calculation mismatch\");\n      const s2 = rrfScore(2, 5, 60);\n      const expected2 = 1/62 + 1/65;\n      if (Math.abs(s2 - expected2) > 0.0001) throw new Error(\"RRF rank 2,5 calculation mismatch\");\n      console.log(\"✓ RRF calculation passed!\");\n    "
+  },
+  {
+    id: "ch-kafka-partition",
+    title: "Kafka Consumer Group Partition Balancing",
+    category: "System Design",
+    difficulty: "medium",
+    desc: "If an Apache Kafka topic has 6 partitions and a consumer group has 8 active consumer instances, how many consumers will remain idle without assigned partitions?",
+    duration: 4,
+    xp: 85,
+    coins: 25,
+    type: "mcq",
+    options: [
+      "0 consumers — multiple consumers will share the same partition.",
+      "2 consumers — at most one consumer per consumer group can read from a single partition at any given time.",
+      "6 consumers — only one consumer reads from the entire topic.",
+      "4 consumers — partitions are split evenly in powers of two."
+],
+    answer: 1,
+    explanation: "Within a single consumer group, each partition is consumed by exactly one consumer at a time to guarantee message order. If there are 6 partitions and 8 consumers, 2 consumers will remain idle as hot standbys."
+  }
 ];
 
 const MOCK_PEERS = [
@@ -233,6 +299,8 @@ export default function ChallengesPage() {
 
   const timerRef = useRef(null);
   const [totalSeconds, setTotalSeconds] = useState(0);
+  const [showAiMentor, setShowAiMentor] = useState(false);
+  const [activeCodeForAi, setActiveCodeForAi] = useState('');
 
   // Filter challenges
   const filteredChallenges = CHALLENGES_LIST.filter(c => {
@@ -430,25 +498,31 @@ export default function ChallengesPage() {
   const totalChallenges = CHALLENGES_LIST.length;
   const solvedCount = Object.values(completedChallenges).filter(c => c.completed).length;
 
-  if (!hasProfile) {
-    return (
-      <div className="challenges page">
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
-          <div className="glass" style={{ textAlign: 'center', padding: 48, maxWidth: 440 }}>
-            <div style={{ fontSize: '3rem', marginBottom: 16 }}>⚔️</div>
-            <h2 style={{ fontFamily: 'var(--font-display)', marginBottom: 12 }}>Unlock Arena</h2>
-            <p style={{ color: 'var(--clr-text-muted)', marginBottom: 24 }}>Create your career profile to participate in timed challenges and lead the rankings.</p>
-            <button className="btn btn-primary" onClick={() => navigate('/profile')}>Create Profile →</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Guest Explorer Mode: If no profile yet, allow full exploration with notification banner
 
   return (
     <div className="challenges page">
       <div className="container animate-fadeIn">
         {/* Hero Banner */}
+                {/* Guest Explorer Mode Banner */}
+        {!hasProfile && (
+          <div className="glass animate-fadeInUp" style={{ padding: '14px 20px', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid rgba(0, 243, 255, 0.3)', background: 'rgba(0, 243, 255, 0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: '1.4rem' }}>⚔️</span>
+              <span style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
+                <strong>Guest Explorer Arena</strong> · Solve algorithmic & architecture challenges, run automated tests, and use the Senior AI Reviewer! Create a profile anytime to track persistent leaderboard XP.
+              </span>
+            </div>
+            <button
+              onClick={() => navigate('/profile')}
+              className="btn btn-primary"
+              style={{ fontSize: '0.78rem', padding: '6px 14px', whiteSpace: 'nowrap' }}
+            >
+              Build Profile →
+            </button>
+          </div>
+        )}
+
         <div className="challenges__hero">
           <div className="challenges__hero-icon">⚔️</div>
           <div>
@@ -617,9 +691,23 @@ export default function ChallengesPage() {
             {/* Bottom Actions Bar */}
             <div className="challenge-runner__bottombar">
               {runningChallenge.type === 'code' && (
-                <button className="btn btn-secondary" onClick={runCode}>
-                  ▶ Run Tests
-                </button>
+                <>
+                  <button className="btn btn-secondary" onClick={runCode}>
+                    ▶ Run Tests
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    style={{ background: 'linear-gradient(135deg, #6366f1, #00f3ff)', border: 'none', color: '#fff', marginLeft: 8 }}
+                    onClick={() => {
+                      setActiveCodeForAi(editorCode);
+                      setShowAiMentor(true);
+                    }}
+                    title="Request Senior AI code review for complexity and bugs"
+                  >
+                    🤖 Senior AI Review
+                  </button>
+                </>
               )}
               <button
                 className="btn btn-primary"
@@ -706,6 +794,23 @@ export default function ChallengesPage() {
           </div>
         )}
       </div>
+      {/* Floating Sentinel AI Mentor Button */}
+      <button
+        className="learn__ai-float-btn"
+        onClick={() => setShowAiMentor(prev => !prev)}
+        title="Open Sentinel AI Senior Dev Mentor"
+      >
+        <span>🤖</span>
+        <span>Sentinel AI Mentor</span>
+      </button>
+
+      {/* Interactive AI Tutor Component */}
+      <InteractiveAITutor
+        activeCode={activeCodeForAi || editorCode || ''}
+        activeLang="javascript"
+        isOpen={showAiMentor}
+        onClose={() => setShowAiMentor(false)}
+      />
     </div>
   );
 }

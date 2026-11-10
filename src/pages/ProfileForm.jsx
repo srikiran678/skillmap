@@ -52,25 +52,24 @@ export default function ProfileForm() {
   const [customJob, setCustomJob] = useState('');
   const [errors, setErrors] = useState({});
 
+  // If profile is loaded asynchronously from storage/server, sync non-empty profile
   useEffect(() => {
-    // If the profile is reset externally, sync the local state back to empty/default.
-    if (!profile.name && (!profile.careerInterests || profile.careerInterests.length === 0)) {
-      const timer = setTimeout(() => {
-        if (step !== 1) setStep(1);
-        if (name !== '') setName('');
-        if (email !== '') setEmail('');
-        if (degree !== '') setDegree('');
-        if (field !== '') setField('');
-        if (year !== '') setYear('');
-        if (institution !== '') setInstitution('');
-        if (selectedDomain !== null) setSelectedDomain(null);
-        if (careerInterests.length > 0) setCareerInterests([]);
-        if (skills.length > 0) setSkills([]);
-        if (Object.keys(errors).length > 0) setErrors({});
-      }, 0);
-      return () => clearTimeout(timer);
+    if (profile?.name) {
+      setName(prev => prev || profile.name);
+      setEmail(prev => prev || profile.email || '');
+      const primaryEdu = profile.academicQualifications?.[0] || {};
+      setDegree(prev => prev || primaryEdu.degree || '');
+      setField(prev => prev || primaryEdu.field || '');
+      setYear(prev => prev || primaryEdu.year || '');
+      setInstitution(prev => prev || primaryEdu.institution || '');
+      if (profile.careerInterests?.length) {
+        setCareerInterests(prev => prev.length ? prev : profile.careerInterests);
+      }
+      if (profile.skills?.length) {
+        setSkills(prev => prev.length ? prev : profile.skills);
+      }
     }
-  }, [profile, step, name, email, degree, field, year, institution, selectedDomain, careerInterests, skills, errors]);
+  }, [profile]);
 
   const jobsForDomain = selectedDomain ? JOB_SKILLS_DB.filter(j => j.domain === selectedDomain) : [];
 

@@ -38,20 +38,7 @@ export default function CertificatesPage() {
     alert(`📥 Downloading credential image for "${cert.title}"...\nFile saved as: ${cert.id}-credential.png`);
   };
 
-  if (!hasProfile) {
-    return (
-      <div className="certificates page">
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
-          <div className="glass" style={{ textAlign: 'center', padding: 48, maxWidth: 440 }}>
-            <div style={{ fontSize: '3rem', marginBottom: 16 }}>🏆</div>
-            <h2 style={{ fontFamily: 'var(--font-display)', marginBottom: 12 }}>Lock and Load</h2>
-            <p style={{ color: 'var(--clr-text-muted)', marginBottom: 24 }}>Set up your career profile first. The Certificate Vault stores your accredited industry credentials.</p>
-            <button className="btn btn-primary" onClick={() => navigate('/profile')}>Create Profile →</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="certificates page">
@@ -61,6 +48,24 @@ export default function CertificatesPage() {
           <h1 className="certificates__title">Certificate <span className="text-gradient">Vault</span> 🏆</h1>
           <p className="certificates__subtitle">Auto-generated, industry-aligned credentials unlocked upon mastery of learning tracks.</p>
         </div>
+
+        {!hasProfile && (
+          <div className="glass animate-fadeInUp" style={{ padding: '14px 20px', borderRadius: 12, marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid rgba(0, 243, 255, 0.3)', background: 'rgba(0, 243, 255, 0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: '1.4rem' }}>🚀</span>
+              <span style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
+                <strong>Guest Explorer Mode</strong> · You can inspect all 11 accredited credentials. Complete lessons in the Learn Hub or build your profile to issue certified credentials!
+              </span>
+            </div>
+            <button
+              onClick={() => navigate('/profile')}
+              className="btn btn-primary"
+              style={{ fontSize: '0.78rem', padding: '6px 14px', whiteSpace: 'nowrap' }}
+            >
+              Build Profile →
+            </button>
+          </div>
+        )}
 
         {/* Stats Bar */}
         <div className="certificates__stats-bar">
