@@ -171,30 +171,6 @@ function TryItEditor({ code, lang, onOpenAiReview }) {
         </div>
       )}
 
-      {/* Floating AI Mentor Button */}
-      <button
-        className="learn__ai-float-btn"
-        onClick={() => setShowAiMentor(prev => !prev)}
-        title="Open Sentinel AI Senior Dev Mentor"
-      >
-        <span>🤖</span>
-        <span>Sentinel AI Mentor</span>
-        {querySkills.length > 0 && (
-          <span style={{ background: '#ff0055', color: '#fff', fontSize: '0.65rem', padding: '1px 6px', borderRadius: 999 }}>
-            {querySkills.length}
-          </span>
-        )}
-      </button>
-
-      {/* Interactive AI Tutor Component */}
-      <InteractiveAITutor
-        activeCode={activeCodeForAi || activeLesson?.code || ''}
-        activeLang={activeLangForAi || (activeLesson?.code?.trim().startsWith('<!DOCTYPE') ? 'html' : activeLesson?.code?.trim().startsWith('#') ? 'python' : 'javascript')}
-        skillGaps={querySkills}
-        targetRole={queryRole}
-        isOpen={showAiMentor}
-        onClose={() => setShowAiMentor(false)}
-      />
     </div>
   );
 }
@@ -301,6 +277,31 @@ function QuizPanel({ quiz, onPass, lessonXp }) {
           )}
         </div>
       )}
+
+      {/* Floating AI Mentor Button */}
+      <button
+        className="learn__ai-float-btn"
+        onClick={() => setShowAiMentor(prev => !prev)}
+        title="Open Sentinel AI Senior Dev Mentor"
+      >
+        <span>🤖</span>
+        <span>Sentinel AI Mentor</span>
+        {querySkills.length > 0 && (
+          <span style={{ background: '#ff0055', color: '#fff', fontSize: '0.65rem', padding: '1px 6px', borderRadius: 999 }}>
+            {querySkills.length}
+          </span>
+        )}
+      </button>
+
+      {/* Interactive AI Tutor Component */}
+      <InteractiveAITutor
+        activeCode={activeCodeForAi || activeLesson?.code || ''}
+        activeLang={activeLangForAi || (activeLesson?.code?.trim().startsWith('<!DOCTYPE') ? 'html' : activeLesson?.code?.trim().startsWith('#') ? 'python' : 'javascript')}
+        skillGaps={querySkills}
+        targetRole={queryRole}
+        isOpen={showAiMentor}
+        onClose={() => setShowAiMentor(false)}
+      />
     </div>
   );
 }
@@ -650,6 +651,31 @@ export default function LearnPage() {
             </div>
           </div>
         </div>
+
+        {/* Floating AI Mentor Button */}
+        <button
+          className="learn__ai-float-btn"
+          onClick={() => setShowAiMentor(prev => !prev)}
+          title="Open Sentinel AI Senior Dev Mentor"
+        >
+          <span>🤖</span>
+          <span>Sentinel AI Mentor</span>
+          {querySkills.length > 0 && (
+            <span style={{ background: '#ff0055', color: '#fff', fontSize: '0.65rem', padding: '1px 6px', borderRadius: 999 }}>
+              {querySkills.length}
+            </span>
+          )}
+        </button>
+
+        {/* Interactive AI Tutor Component */}
+        <InteractiveAITutor
+          activeCode={activeCodeForAi || ''}
+          activeLang={activeLangForAi || 'javascript'}
+          skillGaps={querySkills}
+          targetRole={queryRole}
+          isOpen={showAiMentor}
+          onClose={() => setShowAiMentor(false)}
+        />
       </div>
     );
   }

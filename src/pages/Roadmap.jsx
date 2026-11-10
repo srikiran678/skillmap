@@ -30,6 +30,7 @@ export default function Roadmap() {
         skill: sk,
         levelNeeded: 'Intermediate',
         priority: idx < 2 ? 'High' : 'Medium',
+        jobs: [queryRole || 'Target Career'],
         status: 'To Learn',
         isMastered: false,
       }));
@@ -257,7 +258,7 @@ export default function Roadmap() {
 
                         {/* Jobs need this */}
                         <div style={{ fontSize: '0.75rem', color: 'var(--clr-text-dim)', marginTop: 8 }}>
-                          Needed for: {item.jobs.slice(0, 2).join(', ')}{item.jobs.length > 2 ? ` +${item.jobs.length - 2}` : ''}
+                          Needed for: {(item.jobs || []).slice(0, 2).join(', ')}{(item.jobs || []).length > 2 ? ` +${(item.jobs || []).length - 2}` : ''}
                         </div>
 
                         {/* Feature 6: Skill Assessment (in expanded details) */}
